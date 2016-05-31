@@ -6,7 +6,7 @@ The Api.ai platform lets developers seamlessly integrate intelligent voice and t
 ## Setup
 In order to utilize api.ai's service you will need to create an account and an agent. An agent will represent your Bot's comprehension skills. Head over to their [sign up page](https://console.api.ai/api-client/#/signup) to get started. After creating an account you will be able to create your first agent and start creating intents. Grab the *developer access token* for your local dev and a *client access token* for production as seen below
 
-[Api.ai Tokens](http://s33.postimg.org/6areug03j/apiai.jpg)
+![Api.ai Tokens](http://s33.postimg.org/6areug03j/apiai.jpg)
 
 Next you will need to add botkit-middleware-apiai as a dependency to your Botkit bot:
 
