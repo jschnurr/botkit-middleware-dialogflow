@@ -11,7 +11,7 @@ In order to utilize api.ai's service you will need to create an account and an a
 Next you will need to add botkit-middleware-apiai as a dependency to your Botkit bot:
 
 ```
-npm install --save botkit-middleware-witai
+npm install --save botkit-middleware-apiai
 ```
 
 Enable the middleware:
