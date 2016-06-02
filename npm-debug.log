@@ -1,0 +1,96 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'node', '/usr/local/bin/npm', 'publish' ]
+2 info using npm@2.12.1
+3 info using node@v0.12.7
+4 verbose node symlink /usr/local/bin/node
+5 verbose publish [ '.' ]
+6 silly cache add args [ '.', null ]
+7 verbose cache add spec .
+8 silly cache add parsed spec { raw: '.',
+8 silly cache add   scope: null,
+8 silly cache add   name: null,
+8 silly cache add   rawSpec: '.',
+8 silly cache add   spec: '/Users/robguilfoyle/Code/JavaScript/botkit-middleware-apiai',
+8 silly cache add   type: 'directory' }
+9 verbose addLocalDirectory /Users/robguilfoyle/.npm/botkit-middleware-apiai/0.0.1/package.tgz not in flight; packing
+10 verbose tar pack [ '/Users/robguilfoyle/.npm/botkit-middleware-apiai/0.0.1/package.tgz',
+10 verbose tar pack   '/Users/robguilfoyle/Code/JavaScript/botkit-middleware-apiai' ]
+11 verbose tarball /Users/robguilfoyle/.npm/botkit-middleware-apiai/0.0.1/package.tgz
+12 verbose folder /Users/robguilfoyle/Code/JavaScript/botkit-middleware-apiai
+13 info prepublish botkit-middleware-apiai@0.0.1
+14 verbose addLocalTarball adding from inside cache /Users/robguilfoyle/.npm/botkit-middleware-apiai/0.0.1/package.tgz
+15 silly cache afterAdd botkit-middleware-apiai@0.0.1
+16 verbose afterAdd /Users/robguilfoyle/.npm/botkit-middleware-apiai/0.0.1/package/package.json not in flight; writing
+17 verbose afterAdd /Users/robguilfoyle/.npm/botkit-middleware-apiai/0.0.1/package/package.json written
+18 silly publish { name: 'botkit-middleware-apiai',
+18 silly publish   version: '0.0.1',
+18 silly publish   description: 'Middleware for using Api.ai with Botkit-powered bots',
+18 silly publish   main: 'src/botkit-middleware-apiai.js',
+18 silly publish   scripts: { test: 'echo "Error: no test specified" && exit 1' },
+18 silly publish   repository:
+18 silly publish    { type: 'git',
+18 silly publish      url: 'git+https://github.com/abeai/botkit-middleware-apiai.git' },
+18 silly publish   keywords: [ 'botkit', 'apiai', 'bots' ],
+18 silly publish   author: { name: 'Rob Guilfoyle' },
+18 silly publish   license: 'MIT',
+18 silly publish   bugs: { url: 'https://github.com/abeai/botkit-middleware-apiai/issues' },
+18 silly publish   homepage: 'https://github.com/abeai/botkit-middleware-apiai#readme',
+18 silly publish   dependencies: { apiai: '^2.0.5' },
+18 silly publish   devDependencies: { jscs: '^3.0.3' },
+18 silly publish   readme: '# Botkit Middleware Apiai\nThis middleware plugin for [Botkit](http://howdy.ai/botkit) allows you to utilize [Api.ai](http://api.ai), a natural language classifier service directly into the Botkit corebot.\n\nThe Api.ai platform lets developers seamlessly integrate intelligent voice and text based command systems into their products to create consumer-friendly voice/text-enabled user interfaces.\n\n## Setup\nIn order to utilize api.ai\'s service you will need to create an account and an agent. An agent will represent your Bot\'s comprehension skills. Head over to their [sign up page](https://console.api.ai/api-client/#/signup) to get started. After creating an account you will be able to create your first agent and start creating intents. Grab the *developer access token* for your local dev and a *client access token* for production as seen below\n\n![Api.ai Tokens](http://s33.postimg.org/6areug03j/apiai.jpg)\n\nNext you will need to add botkit-middleware-apiai as a dependency to your Botkit bot:\n\n```\nnpm install --save botkit-middleware-apiai\n```\n\nEnable the middleware:\n```\nvar apiai = require(\'botkit-middleware-apiai\')({\n    token: <my_apiai_token>\n});\n\ncontroller.middleware.receive.use(apiai.receive);\n\ncontroller.hears([\'hello\'],\'direct_message\',apiai.hears,function(bot, message) {\n    // ...\n});\n```\n\n## What it does\n\nUsing the Api.ai middleware with Botkit causes every message sent to your bot to be first sent through Api.ai\'s NLP services for processing. The response from Api.ai is then returned in the incoming messages as `message.intent`, `message.entities` for any language entities (dates, places, etc), `message.fulfillment` for Api.ai specific speech fulfillment, `message.confidence` for the confidence interval, and finally the `message.nlpResponse` which represents the raw request as seen below:\n\n    {\n      "id": "XXXX",\n      "timestamp": "2016-05-31T18:20:38.992Z",\n      "result": {\n        "source": "agent",\n        "resolvedQuery": "hello",\n        "action": "",\n        "actionIncomplete": false,\n        "parameters": {},\n        "contexts": [],\n        "metadata": {\n          "intentId": "XXX",\n          "webhookUsed": "false",\n          "intentName": "hello"\n        },\n        "fulfillment": {\n          "speech": ""\n        },\n        "score": 1\n      },\n      "status": {\n        "code": 200,\n        "errorType": "success"\n      }\n    }\n',
+18 silly publish   readmeFilename: 'README.md',
+18 silly publish   gitHead: '3e8f547fd16285b704ac7c557c124ecdadd4ae3e',
+18 silly publish   _id: 'botkit-middleware-apiai@0.0.1',
+18 silly publish   _shasum: '94f9ee3b4f50896fc52d913bb034a8a4be8d70ff',
+18 silly publish   _from: '.' }
+19 verbose getPublishConfig undefined
+20 silly mapToRegistry name botkit-middleware-apiai
+21 silly mapToRegistry using default registry
+22 silly mapToRegistry registry https://registry.npmjs.org/
+23 silly mapToRegistry uri https://registry.npmjs.org/botkit-middleware-apiai
+24 verbose publish registryBase https://registry.npmjs.org/
+25 silly publish uploading /Users/robguilfoyle/.npm/botkit-middleware-apiai/0.0.1/package.tgz
+26 verbose request uri https://registry.npmjs.org/botkit-middleware-apiai
+27 verbose request sending authorization for write operation
+28 info attempt registry request try #1 at 14:04:37
+29 verbose request using bearer token for auth
+30 verbose request id b3206e0d4b3a9daa
+31 http request PUT https://registry.npmjs.org/botkit-middleware-apiai
+32 http 403 https://registry.npmjs.org/botkit-middleware-apiai
+33 verbose headers { 'content-type': 'application/json',
+33 verbose headers   'cache-control': 'max-age=300',
+33 verbose headers   'content-length': '95',
+33 verbose headers   'accept-ranges': 'bytes',
+33 verbose headers   date: 'Thu, 02 Jun 2016 18:04:37 GMT',
+33 verbose headers   via: '1.1 varnish',
+33 verbose headers   connection: 'keep-alive',
+33 verbose headers   'x-served-by': 'cache-atl6237-ATL',
+33 verbose headers   'x-cache': 'MISS',
+33 verbose headers   'x-cache-hits': '0',
+33 verbose headers   'x-timer': 'S1464890676.471303,VS0,VE1144',
+33 verbose headers   vary: 'Accept-Encoding' }
+34 verbose request invalidating /Users/robguilfoyle/.npm/registry.npmjs.org/botkit-middleware-apiai on PUT
+35 error publish Failed PUT 403
+36 verbose stack Error: "You cannot publish over the previously published version 0.0.1." : botkit-middleware-apiai
+36 verbose stack     at CachingRegistryClient.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:247:14)
+36 verbose stack     at Request._callback (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:170:14)
+36 verbose stack     at Request.self.callback (/usr/local/lib/node_modules/npm/node_modules/request/request.js:197:22)
+36 verbose stack     at Request.emit (events.js:110:17)
+36 verbose stack     at Request.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:1050:14)
+36 verbose stack     at Request.emit (events.js:129:20)
+36 verbose stack     at IncomingMessage.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:996:12)
+36 verbose stack     at IncomingMessage.emit (events.js:129:20)
+36 verbose stack     at _stream_readable.js:908:16
+36 verbose stack     at process._tickCallback (node.js:355:11)
+37 verbose statusCode 403
+38 verbose pkgid botkit-middleware-apiai
+39 verbose cwd /Users/robguilfoyle/Code/JavaScript/botkit-middleware-apiai
+40 error Darwin 15.4.0
+41 error argv "node" "/usr/local/bin/npm" "publish"
+42 error node v0.12.7
+43 error npm  v2.12.1
+44 error code E403
+45 error "You cannot publish over the previously published version 0.0.1." : botkit-middleware-apiai
+46 error If you need help, you may report this error at:
+46 error     <https://github.com/npm/npm/issues>
+47 verbose exit [ 1, true ]

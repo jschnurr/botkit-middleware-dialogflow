@@ -1,6 +1,6 @@
 {
   "name": "botkit-middleware-apiai",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Middleware for using Api.ai with Botkit-powered bots",
   "main": "src/botkit-middleware-apiai.js",
   "scripts": {
@@ -13,9 +13,10 @@
   "keywords": [
     "botkit",
     "apiai",
-    "bots"
+    "bots",
+    "slack"
   ],
-  "author": "Rob Guilfoyle",
+  "author": "Abe.ai",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/abeai/botkit-middleware-apiai/issues"
