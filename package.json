@@ -1,31 +1,37 @@
 {
-  "name": "botkit-middleware-apiai",
-  "version": "0.0.2",
-  "description": "Middleware for using Api.ai with Botkit-powered bots",
-  "main": "src/botkit-middleware-apiai.js",
+  "name": "botkit-middleware-dialogflow",
+  "version": "1.0.0",
+  "description": "Middleware for using Dialogflow (formerly Api.ai) with Botkit-powered bots",
+  "main": "src/botkit-middleware-dialogflow.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/abeai/botkit-middleware-apiai.git"
+    "url": "git+https://github.com/jschnurr/botkit-middleware-dialogflow.git"
   },
   "keywords": [
     "botkit",
     "apiai",
+    "dialogflow",
     "bots",
     "slack"
   ],
-  "author": "Abe.ai",
+  "author": {
+    "name": "Jeff Schnurr",
+    "email": "jschnurr@gmail.com"
+  },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/abeai/botkit-middleware-apiai/issues"
+    "url": "https://github.com/jschnurr/botkit-middleware-dialogflow/issues"
   },
-  "homepage": "https://github.com/abeai/botkit-middleware-apiai#readme",
+  "homepage": "https://github.com/jschnurr/botkit-middleware-dialogflow#readme",
   "dependencies": {
-    "apiai": "^2.0.5"
+    "apiai": "^4.0.3",
+    "botkit": "^0.6.7",
+    "node-uuid": "^1.4.8"
   },
   "devDependencies": {
-    "jscs": "^3.0.3"
+    "jscs": "^3.0.7"
   }
 }

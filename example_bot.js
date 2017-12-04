@@ -23,17 +23,17 @@ This bot demonstrates many of the core features of Botkit:
 
     -> http://my.slack.com/services/new/bot
 
-  Get a Api.ai token from api.ai
+  Get a developer access token from dialogflow
 
-    -> https://console.api.ai/api-client/#/editAgent/<your-agent-id>
+    -> https://console.dialogflow.com/api-client/#/editAgent/<your-agent-id>
 
   Run your bot from the command line:
 
-    apiai=<api-token> token=<token> node apiai_example_bot.js
+    dialogflow=<api-token> token=<token> node example_bot.js
 
 # USE THE BOT:
 
-  Train a "hello" intent inside Api.ai.  Give it a bunch of examples
+  Train a "hello" intent inside Dialogflow.  Give it a bunch of examples
   of how someone might say "Hello" to your bot.
 
   Find your bot inside Slack to send it a direct message.
@@ -41,7 +41,7 @@ This bot demonstrates many of the core features of Botkit:
   Say: "Hello"
 
   The bot should reply "Hello!" If it didn't, your intent hasn't been
-  properly trained - check out the api.ai console!
+  properly trained - check out the dialogflow console!
 
   Make sure to invite your bot into other channels using /invite @<my bot>!
 
@@ -61,14 +61,14 @@ if (!process.env.token) {
     process.exit(1);
 }
 
-if (!process.env.apiai) {
-    console.log('Error: Specify apiai in environment');
+if (!process.env.dialogflow) {
+    console.log('Error: Specify dialogflow in environment');
     process.exit(1);
 }
 
 var Botkit = require('botkit');
-var apiai = require('./src/botkit-middleware-apiai')({
-    token: process.env.apiai,
+var dialogflow = require('./src/botkit-middleware-dialogflow')({
+    token: process.env.dialogflow,
 });
 
 
@@ -79,12 +79,12 @@ var controller = Botkit.slackbot({
 var bot = controller.spawn({
     token: process.env.token
 }).startRTM();
-console.log(apiai);
-controller.middleware.receive.use(apiai.receive);
+console.log(dialogflow);
+controller.middleware.receive.use(dialogflow.receive);
 
 
 /* note this uses example middlewares defined above */
-controller.hears(['hello'], 'direct_message,direct_mention,mention', apiai.hears, function(bot, message) {
+controller.hears(['hello'], 'direct_message,direct_mention,mention', dialogflow.hears, function (bot, message) {
     console.log(JSON.stringify(message));
     console.log('hello');
     bot.reply(message, 'Hello!');
