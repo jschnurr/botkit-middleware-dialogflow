@@ -1,6 +1,6 @@
 {
   "name": "botkit-middleware-dialogflow",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Middleware for using Dialogflow (formerly Api.ai) with Botkit-powered bots",
   "main": "src/botkit-middleware-dialogflow.js",
   "scripts": {
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jschnurr/botkit-middleware-dialogflow.git"
+    "url": "https://github.com/jschnurr/botkit-middleware-dialogflow.git"
   },
   "keywords": [
     "botkit",
@@ -28,7 +28,6 @@
   "homepage": "https://github.com/jschnurr/botkit-middleware-dialogflow#readme",
   "dependencies": {
     "apiai": "^4.0.3",
-    "botkit": "^0.6.7",
     "node-uuid": "^1.4.8"
   },
   "devDependencies": {
