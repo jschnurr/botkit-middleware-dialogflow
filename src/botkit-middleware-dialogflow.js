@@ -17,33 +17,32 @@ module.exports = function(config) {
     var sessionId = uuid.v1();
 
     middleware.receive = function(bot, message, next) {
-        if (message.bot_id !== undefined) {
+        if (!message.text || message.is_echo) {
             next();
-        } else if (message.text) {
-            debug('Sending message to dialogflow', message.text);
-            request = app.textRequest(message.text, {
-                sessionId: sessionId,
-            });
+            return;
+        };
 
-            request.on('response', function(response) {
-                message.intent = response.result.metadata.intentName;
-                message.entities = response.result.parameters;
-                message.fulfillment = response.result.fulfillment;
-                message.confidence = response.result.score;
-                message.nlpResponse = response;
-                debug('dialogflow response', response);
-                next();
-            });
+        debug('Sending message to dialogflow', message.text);
+        request = app.textRequest(message.text, {
+            sessionId: sessionId,
+        });
 
-            request.on('error', function(error) {
-                debug('dialogflow returned error', error);
-                next(error);
-            });
-
-            request.end();
-        } else {
+        request.on('response', function(response) {
+            message.intent = response.result.metadata.intentName;
+            message.entities = response.result.parameters;
+            message.fulfillment = response.result.fulfillment;
+            message.confidence = response.result.score;
+            message.nlpResponse = response;
+            debug('dialogflow response', response);
             next();
-        }
+        });
+
+        request.on('error', function(error) {
+            debug('dialogflow returned error', error);
+            next(error);
+        });
+
+        request.end();
     };
 
     middleware.hears = function(patterns, message) {
