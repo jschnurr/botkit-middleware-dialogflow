@@ -21,7 +21,6 @@ Enable the middleware:
 ```javascript
 var dialogflow = require('botkit-middleware-dialogflow')({
     token: <my_dialogflow_token>,
-    skip_bot: true // false. If true, the middleware doesn't send the bot reply/says to Dialogflow
 });
 
 controller.middleware.receive.use(dialogflow.receive);

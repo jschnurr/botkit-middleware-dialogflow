@@ -12,17 +12,13 @@ module.exports = function (config) {
         config.minimum_confidence = 0.5;
     }
 
-    if (!config.skip_bot) {
-        config.skip_bot = false;
-    }
-
     var app = apiai(config.token);
 
     var middleware = {};
     var sessionId = uuid.v1();
 
     middleware.receive = function (bot, message, next) {
-        if (config.skip_bot === true && message.bot_id !== undefined) {
+        if (message.bot_id !== undefined) {
             next()
         }
         else if (message.text) {
