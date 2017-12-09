@@ -4,7 +4,9 @@
   "description": "Middleware for using Dialogflow (formerly Api.ai) with Botkit-powered bots",
   "main": "src/botkit-middleware-dialogflow.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint **/*.js",
+    "prepublish": "npm run lint"
   },
   "repository": {
     "type": "git",
@@ -32,6 +34,7 @@
     "node-uuid": "^1.4.8"
   },
   "devDependencies": {
-    "jscs": "^3.0.7"
+    "eslint": "^4.13.0",
+    "eslint-config-google": "^0.9.1"
   }
 }

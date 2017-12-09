@@ -1,4 +1,4 @@
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
            ______     ______     ______   __  __     __     ______
           /\  == \   /\  __ \   /\__  _\ /\ \/ /    /\ \   /\__  _\
           \ \  __<   \ \ \/\ \  \/_/\ \/ \ \  _"-.  \ \ \  \/_/\ \/
@@ -77,14 +77,15 @@ var controller = Botkit.slackbot({
 });
 
 var bot = controller.spawn({
-    token: process.env.token
-}).startRTM();
+    token: process.env.token,
+});
+bot.startRTM();
 console.log(dialogflow);
 controller.middleware.receive.use(dialogflow.receive);
 
 
 /* note this uses example middlewares defined above */
-controller.hears(['hello'], 'direct_message,direct_mention,mention', dialogflow.hears, function (bot, message) {
+controller.hears(['hello'], 'direct_message,direct_mention,mention', dialogflow.hears, function(bot, message) {
     console.log(JSON.stringify(message));
     console.log('hello');
     bot.reply(message, 'Hello!');
