@@ -82,5 +82,16 @@ Using the Dialogflow middleware with Botkit causes every message sent to your bo
 }
 ```
 
+## Debugging
+
+To enable debug logging, specify `dialogflow-middleware` in the DEBUG environment variable,
+like this:
+
+```bash
+DEBUG=dialogflow-middleware node your_awesome_bot.js
+```
+
+## Credit
+
 Forked from [botkit-middleware-apiai](https://github.com/abeai/botkit-middleware-apiai). Thanks to
 [@abeai](https://github.com/abeai) for the original work.

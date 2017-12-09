@@ -1,3 +1,4 @@
+var debug = require('debug')('dialogflow-middleware');
 var apiai = require('apiai');
 var uuid = require('node-uuid');
 
@@ -25,6 +26,7 @@ module.exports = function (config) {
             next()
         }
         else if (message.text) {
+            debug('Sending message to dialogflow', message.text)
             request = app.textRequest(message.text, {
                 sessionId: sessionId
             });
@@ -35,10 +37,12 @@ module.exports = function (config) {
                 message.fulfillment = response.result.fulfillment;
                 message.confidence = response.result.score;
                 message.nlpResponse = response;
+                debug('dialogflow response', response);
                 next();
             });
 
             request.on('error', function (error) {
+                debug('dialogflow returned error', error);
                 next(error);
             });
 
@@ -49,10 +53,11 @@ module.exports = function (config) {
         }
     };
 
-    middleware.hears = function (tests, message) {
-        for (var i = 0; i < tests.length; i++) {
-            if (message.intent === tests[i] &&
+    middleware.hears = function (patterns, message) {
+        for (var i = 0; i < patterns.length; i++) {
+            if (message.intent === patterns[i] &&
                 message.confidence >= config.minimum_confidence) {
+                debug('dialogflow intent matched hear pattern', message.intent, patterns[i])
                 return true;
             }
         }
@@ -60,10 +65,11 @@ module.exports = function (config) {
         return false;
     };
 
-    middleware.action = function (tests, message) {
-        for (var i = 0; i < tests.length; i++) {
-            if (message.nlpResponse.result.action === tests[i] &&
+    middleware.action = function (patterns, message) {
+        for (var i = 0; i < patterns.length; i++) {
+            if (message.nlpResponse.result.action === patterns[i] &&
                 message.confidence >= config.minimum_confidence) {
+                debug('dialogflow action matched hear pattern', message.intent, patterns[i])
                 return true;
             }
         }

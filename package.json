@@ -28,6 +28,7 @@
   "homepage": "https://github.com/jschnurr/botkit-middleware-dialogflow#readme",
   "dependencies": {
     "apiai": "^4.0.3",
+    "debug": "^3.1.0",
     "node-uuid": "^1.4.8"
   },
   "devDependencies": {
