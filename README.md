@@ -1,10 +1,12 @@
 # Botkit Middleware Dialogflow
+
 This middleware plugin for [Botkit](http://howdy.ai/botkit) allows you to utilize [Dialogflow](https://dialogflow.com/)
 (formerly [api.ai](https://api.ai), a natural language classifier service directly into the Botkit corebot.
 
 The Dialogflow platform lets developers seamlessly integrate intelligent voice and text based command systems into their products to create consumer-friendly voice/text-enabled user interfaces.
 
 ## Setup
+
 In order to utilize Dialogflow's service you will need to create an account and an agent. An agent will represent your Bots comprehension skills. Head over to their [sign up page](https://console.dialogflow.com/api-client/#/login) to get started. After creating an account you will be able to create your first agent and start creating intents. Grab the *developer access token* for your local dev and a *client access token* for production as seen below
 
 ![Dialogflow Tokens](https://s8.postimg.org/bgepzb4d1/tokens.png)
