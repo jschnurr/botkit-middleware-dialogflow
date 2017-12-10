@@ -1,5 +1,3 @@
-small talk
-
 # Botkit Middleware Dialogflow
 
 This middleware plugin for [Botkit](http://howdy.ai/botkit) allows developers to integrate [Google Dialogflow](https://dialogflow.com/) (formerly [api.ai](https://api.ai)) with social platforms like Slack, Facebook and Twilio.
