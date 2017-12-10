@@ -1,5 +1,8 @@
 {
   "extends": "google",
+  "env": {
+    "es6": true
+  },
   "rules": {
     "no-with": 2,
     "no-var": 0,
