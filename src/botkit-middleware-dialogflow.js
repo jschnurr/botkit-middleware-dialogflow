@@ -17,7 +17,12 @@ module.exports = function(config) {
     var sessionId = uuid.v1();
 
     middleware.receive = function(bot, message, next) {
-        if (!message.text || message.is_echo) {
+        if (!message.text) {
+            next();
+            return;
+        };
+
+        if (message.is_echo || message.type === 'self_message') {
             next();
             return;
         };
