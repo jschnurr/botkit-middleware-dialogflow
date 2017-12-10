@@ -127,30 +127,35 @@ DEBUG=dialogflow-middleware node your_awesome_bot.js
 
 # Change Log
 
-##### 9-Dec-2017 v1.1.0
-6736318 readme fix
-85ac1d9 readme updates
-cc69e97 readme changes
-fc6afee updated examples
-c6bebf7 linter support for es6 keywords
-00afeb5 debug logging fix to print entire response object
-a8b2e44 filter out self_message type from slack
-2e4b8be ignore editor files
-db655d8 BREAKING CHANGE update criteria for skipping middleware automatically
-e79ba20 migrate to eslint and apply formatter to comply with .eslintrc rules
-aee024b BREAKING CHANGE remove skip_bot option
-bdfca59 minor formatting change in readme
-d450d9a add debug logging
+### 9-Dec-2017 v1.1.0
 
-##### 3-Dec-2017 v1.0.1
-198668d correct package.json
-2086173 rebrand as dialogflow
+- 694ffa8 fix linting errors
+- 03acc9b travis and changelog added
+- 6736318 readme fix
+- 85ac1d9 readme updates
+- cc69e97 readme changes
+- fc6afee updated examples
+- c6bebf7 linter support for es6 keywords
+- 00afeb5 debug logging fix to print entire response object
+- a8b2e44 filter out self_message type from slack
+- 2e4b8be ignore editor files
+- db655d8 BREAKING CHANGE update criteria for skipping middleware automatically
+- e79ba20 migrate to eslint and apply formatter to comply with .eslintrc rules
+- aee024b BREAKING CHANGE remove skip_bot option
+- bdfca59 minor formatting change in readme
+- d450d9a add debug logging
 
-##### pre-fork as botkit-middleware-apiai
-213a76d bumped version on npm
-3e8f547 update readme with correct npm module
-ccc3368 images in readme
-69a123f init
+### 3-Dec-2017 v1.0.1
+
+- 198668d correct package.json
+- 2086173 rebrand as dialogflow
+
+### pre-fork as botkit-middleware-apiai
+
+- 213a76d bumped version on npm
+- 3e8f547 update readme with correct npm module
+- ccc3368 images in readme
+- 69a123f init
 
 # Credit
 
