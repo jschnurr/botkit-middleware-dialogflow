@@ -2,7 +2,8 @@ small talk
 
 # Botkit Middleware Dialogflow
 
-This middleware plugin for [Botkit](http://howdy.ai/botkit) allows developers to integrate [Google Dialogflow](https://dialogflow.com/) (formerly [api.ai](https://api.ai) with social platforms like Slack, Facebook and Twilio.
+This middleware plugin for [Botkit](http://howdy.ai/botkit) allows developers to integrate [Google Dialogflow](https://dialogflow.com/) (formerly [api.ai](https://api.ai)) with social platforms like Slack, Facebook and Twilio.
+
 Dialogflow's Natural Language Processing (NLP) platform transforms real-world user input into structured
 **intents** and **entities**, and can optionally trigger **actions** and **fulfillment (webhooks)**. Configuration
 and training are done in the convenient and powerful [Dialogflow Console](https://console.dialogflow.com/), with
@@ -12,12 +13,12 @@ the results being immediately available to your bot.
 
 #### [Receive Middleware](https://github.com/howdyai/botkit/blob/master/docs/middleware.md#receive-middleware)
 
-- *middleware.receive*: used to send the message content to Dialogflow, and add results to the message object.
+- `middleware.receive`: used to send the message content to Dialogflow, and add results to the message object.
 
 #### [Hear Middleware](https://github.com/howdyai/botkit/blob/master/docs/middleware.md#hear-middleware)
 
-- *middleware.hears*: matches intent names as configured in [Dialogflow Console](https://console.dialogflow.com/)
-- *middleware.action*: matches action names configured in [Dialogflow Console](https://console.dialogflow.com/)
+- `middleware.hears`: matches intent names as configured in [Dialogflow Console](https://console.dialogflow.com/)
+- `middleware.action`: matches action names configured in [Dialogflow Console](https://console.dialogflow.com/)
 
 ## Installation
 
