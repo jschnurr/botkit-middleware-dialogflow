@@ -6,16 +6,13 @@
             \/_____/   \/_____/     \/_/   \/_/\/_/   \/_/     \/_/
 
 
-This is a sample Slack bot built with Botkit.
+This is a sample Slack bot built with Botkit, using the Dialogflow middleware.
 
 This bot demonstrates many of the core features of Botkit:
 
 * Connect to Slack using the real time API
 * Receive messages based on "spoken" patterns
 * Reply to messages
-* Use the conversation system to ask questions
-* Use the built in storage system to store and retrieve information
-  for a user.
 
 # RUN THE BOT:
 
@@ -33,7 +30,7 @@ This bot demonstrates many of the core features of Botkit:
 
 # USE THE BOT:
 
-  Train a "hello" intent inside Dialogflow.  Give it a bunch of examples
+  Train an intent titled "hello-intent" inside Dialogflow.  Give it a bunch of examples
   of how someone might say "Hello" to your bot.
 
   Find your bot inside Slack to send it a direct message.
@@ -67,26 +64,23 @@ if (!process.env.dialogflow) {
 }
 
 var Botkit = require('botkit');
-var dialogflow = require('./src/botkit-middleware-dialogflow')({
-    token: process.env.dialogflow,
-});
 
-
-var controller = Botkit.slackbot({
+var slackController = Botkit.slackbot({
     debug: true,
 });
 
-var bot = controller.spawn({
+var slackBot = slackController.spawn({
     token: process.env.token,
 });
-bot.startRTM();
-console.log(dialogflow);
-controller.middleware.receive.use(dialogflow.receive);
 
+var dialogflowMiddleware = require('../')({
+    token: process.env.dialogflow,
+});
+
+slackController.middleware.receive.use(dialogflowMiddleware.receive);
+slackBot.startRTM();
 
 /* note this uses example middlewares defined above */
-controller.hears(['hello'], 'direct_message,direct_mention,mention', dialogflow.hears, function(bot, message) {
-    console.log(JSON.stringify(message));
-    console.log('hello');
+slackController.hears(['hello-intent'], 'direct_message', dialogflowMiddleware.hears, function(bot, message) {
     bot.reply(message, 'Hello!');
 });
