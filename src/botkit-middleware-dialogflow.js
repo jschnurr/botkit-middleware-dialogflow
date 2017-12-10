@@ -38,7 +38,7 @@ module.exports = function(config) {
             message.fulfillment = response.result.fulfillment;
             message.confidence = response.result.score;
             message.nlpResponse = response;
-            debug('dialogflow response', response);
+            debug('dialogflow annotated message: %O', message);
             next();
         });
 
