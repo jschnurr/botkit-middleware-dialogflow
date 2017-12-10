@@ -1,87 +1,120 @@
+small talk
+
 # Botkit Middleware Dialogflow
 
-This middleware plugin for [Botkit](http://howdy.ai/botkit) allows you to utilize [Dialogflow](https://dialogflow.com/)
-(formerly [api.ai](https://api.ai), a natural language classifier service directly into the Botkit corebot.
+This middleware plugin for [Botkit](http://howdy.ai/botkit) allows developers to integrate [Google Dialogflow](https://dialogflow.com/) (formerly [api.ai](https://api.ai) with social platforms like Slack, Facebook and Twilio.
+Dialogflow's Natural Language Processing (NLP) platform transforms real-world user input into structured
+**intents** and **entities**, and can optionally trigger **actions** and **fulfillment (webhooks)**. Configuration
+and training are done in the convenient and powerful [Dialogflow Console](https://console.dialogflow.com/), with
+the results being immediately available to your bot.
 
-The Dialogflow platform lets developers seamlessly integrate intelligent voice and text based command systems into their products to create consumer-friendly voice/text-enabled user interfaces.
+## Function Overview
 
-## Setup
+#### [Receive Middleware](https://github.com/howdyai/botkit/blob/master/docs/middleware.md#receive-middleware)
 
-In order to utilize Dialogflow's service you will need to create an account and an agent. An agent will represent your Bots comprehension skills. Head over to their [sign up page](https://console.dialogflow.com/api-client/#/login) to get started. After creating an account you will be able to create your first agent and start creating intents. Grab the *developer access token* for your local dev and a *client access token* for production as seen below
+- *middleware.receive*: used to send the message content to Dialogflow, and add results to the message object.
+
+#### [Hear Middleware](https://github.com/howdyai/botkit/blob/master/docs/middleware.md#hear-middleware)
+
+- *middleware.hears*: matches intent names as configured in [Dialogflow Console](https://console.dialogflow.com/)
+- *middleware.action*: matches action names configured in [Dialogflow Console](https://console.dialogflow.com/)
+
+## Installation
+
+```bash
+npm install botkit-middleware-dialogflow --save
+```
+
+## Usage
+
+### Create a Dialogflow Agent
+
+To get started, [sign up for an account](https://console.dialogflow.com/api-client/#/login), and explore the
+[Dialogflow Console](https://console.dialogflow.com/).
+
+Next, create an [agent](https://dialogflow.com/docs/agents). Agents represent your bots' NLU (Natural Language
+Understanding). Your bot will interact with your agent through the [Dialogflow API](https://dialogflow.com/docs/reference/agent/).
+
+The API keys can be found in the [agent settings](https://dialogflow.com/docs/agents#settings). Note the
+*Client access token*; this will be required by your bot.
 
 ![Dialogflow Tokens](https://s8.postimg.org/bgepzb4d1/tokens.png)
 
-Next you will need to add botkit-middleware-dialogflow as a dependency to your Botkit bot:
+### Configure a Channel
 
-```
-npm install --save botkit-middleware-dialogflow
-```
+This document shows code snippets using [Slack](https://github.com/howdyai/botkit/blob/master/docs/readme-slack.md) with the middleware. See the `examples` folder for how to configure a basic bot on your preferred service.
 
-Enable the middleware:
+### Bot Setup
+
+Let's walk through the code in the `examples/slack_bot.js` file.
+
+Let's start with Botkit. That's the main engine.
+
 ```javascript
-var dialogflow = require('botkit-middleware-dialogflow')({
-    token: <my_dialogflow_token>,
+var Botkit = require('botkit');
+```
+
+Create a Slack controller using Botkit:
+
+```javascript
+var slackController = Botkit.slackbot({
+    debug: true,
 });
+```
 
-controller.middleware.receive.use(dialogflow.receive);
+Spawn a Slack bot using the controller:
 
-// dialogflow.hears for intents. in this example 'hello' is the intent
-controller.hears(['hello'],'direct_message',dialogflow.hears,function(bot, message) {
-    // ...
+```javascript
+var slackBot = slackController.spawn({
+    token: process.env.token,
 });
+```
 
-// dialogflow.action for actions. in this example 'user.setName' is the action
-controller.hears(['user.setName'],'direct_message',dialogflow.action,function(bot, message) {
-    // ...
+Create a middleware object which we'll be attaching to the controller:
+
+```javascript
+var dialogflowMiddleware = require('botkit-middleware-dialogflow')({
+    token: process.env.dialogflow,
+});
+```
+
+Tell your Slackbot to use the middleware when it receives a message:
+
+```javascript
+slackController.middleware.receive.use(dialogflowMiddleware.receive);
+slackBot.startRTM();
+```
+
+Finally, make your bot listen for the intent you configured in the Dialogflow Agent. Notice we
+are listening for `hello-intent` - that's the name we gave the intent in the [Dialogflow Console](https://console.dialogflow.com/).
+
+```javascript
+slackController.hears(['hello-intent'], 'direct_message', dialogflowMiddleware.hears, function(bot, message) {
+    bot.reply(message, 'Hello!');
 });
 ```
 
 ## What it does
 
-Using the Dialogflow middleware with Botkit causes every message sent to your bot to be first sent through Dialogflow's NLP services for processing. The response from Dialogflow is then returned in the incoming messages as the following properties:
-- `message.intent`
-- `message.entities` for any language entities (dates, places, etc)
+The middleware parses the Dialogflow API response and updates the message object. The raw result of the middleware call to [https://api.dialogflow.com/v1/query](https://dialogflow.com/docs/reference/agent/query) endpoint is made available on the `nlpResponse` property of the message.
+
+The full set of properties available after processing include:
+- `message.intent` for any named intents found as defined in Dialogflow
+- `message.entities` for any language entities defined in Dialogflow (dates, places, etc)
 - `message.fulfillment` for Dialogflow specific speech fulfillment
 - `message.confidence` for the confidence interval
-- `message.nlpResponse` for the raw request, as seen below:
+- `message.nlpResponse` for the raw Dialogflow response.
 
-```json
-{
-  "id": "18ae5775-f95f-4f8f-a4de-85a9199d5048",
-  "timestamp": "2017-12-04T03:02:36.824Z",
-  "lang": "en",
-  "result": {
-    "source": "agent",
-    "resolvedQuery": "Hello!",
-    "action": "",
-    "actionIncomplete": false,
-    "parameters": {},
-    "contexts": [],
-    "metadata": {
-      "intentId": "2812178c-edea-4403-8767-2a051fbe951b",
-      "webhookUsed": "false",
-      "webhookForSlotFillingUsed": "false",
-      "intentName": "hello"
-    },
-    "fulfillment": {
-      "speech": "",
-      "messages": [
-        {
-          "type": 0,
-          "speech": ""
-        }
-      ]
-    },
-    "score": 1
-  },
-  "status": {
-    "code": 200,
-    "errorType": "success",
-    "webhookTimedOut": false
-  },
-  "sessionId": "91d34030-d89f-11e7-8471-e54c58f90eba"
-}
-```
+Here is a diff of a message object, before and after middleware processing.
+
+![Message Object Diff](https://s8.postimg.org/450f8dak5/message_dif.png)
+
+# Features
+
+## Entities
+
+Dialogflow has the ability to extract entities (dates, places, etc) from user input. If you have configured your Agent this way,
+any entities found will be available on the message.entities property.
 
 ## Debugging
 
@@ -92,7 +125,11 @@ like this:
 DEBUG=dialogflow-middleware node your_awesome_bot.js
 ```
 
-## Credit
+# Credit
 
 Forked from [botkit-middleware-apiai](https://github.com/abeai/botkit-middleware-apiai). Thanks to
 [@abeai](https://github.com/abeai) for the original work.
+
+# License
+
+This library is licensed under the MIT license. Full text is available in LICENSE.
