@@ -75,7 +75,6 @@ if (!process.env.dialogflow) {
 }
 
 var Botkit = require('botkit');
-var os = require('os');
 var commandLineArgs = require('command-line-args');
 var localtunnel = require('localtunnel');
 
