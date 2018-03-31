@@ -1,6 +1,6 @@
 {
   "name": "botkit-middleware-dialogflow",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Middleware for using Dialogflow (formerly Api.ai) with Botkit-powered bots",
   "main": "src/botkit-middleware-dialogflow.js",
   "scripts": {
