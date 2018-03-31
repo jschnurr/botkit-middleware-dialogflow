@@ -88,8 +88,25 @@ slackBot.startRTM();
 Finally, make your bot listen for the intent you configured in the Dialogflow Agent. Notice we
 are listening for `hello-intent` - that's the name we gave the intent in the [Dialogflow Console](https://console.dialogflow.com/).
 
+Patterns can be provided as an array or a comma separated string containing a list of regular expressions to match.
+
 ```javascript
-slackController.hears(['hello-intent'], 'direct_message', dialogflowMiddleware.hears, function(bot, message) {
+// listen for literal string 'hello-intent' (case insensitive)
+slackController.hears('hello-intent', 'direct_message', dialogflowMiddleware.hears, function(bot, message) {
+    bot.reply(message, 'Hello!');
+});
+```
+
+```javascript
+// listen for literal string 'hello-intent', or anything beginning with "HELLO" (case insensitive)
+slackController.hears(['hello-intent', /^HELLO.*/i], 'direct_message', dialogflowMiddleware.hears, function(bot, message) {
+    bot.reply(message, 'Hello!');
+});
+```
+
+```javascript
+// listen for comma-separated 'hello-intent' or 'greeting-intent'
+slackController.hears('hello-intent,greeting-intent', 'direct_message', dialogflowMiddleware.hears, function(bot, message) {
     bot.reply(message, 'Hello!');
 });
 ```

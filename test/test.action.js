@@ -1,6 +1,7 @@
 var Botkit = require('botkit');
 var nock = require('nock');
 var expect = require('chai').expect;
+var clone = require('clone');
 
 describe('action()', function() {
     // Dialogflow params
@@ -91,10 +92,67 @@ describe('action()', function() {
 
     it('should not trigger action if confidence is not high enough', function(done) {
         middleware.receive(bot, message, function(err, response) {
-            message.confidence = 0.1; // under default threshold of 0.5
+            let msg = clone(message);
+            msg.confidence = 0.1; // under default threshold of 0.5
 
-            let action = middleware.action(['pickFruit'], message);
+            let action = middleware.action(['pickFruit'], msg);
             expect(action).is.false;
+            done();
+        });
+    });
+
+    it('should match action as a string', function(done) {
+        middleware.receive(bot, message, function(err, response) {
+            let action = middleware.action('pickFruit', message);
+            expect(action).is.true;
+            done();
+        });
+    });
+
+    it('should match action as a string containing regex', function(done) {
+        middleware.receive(bot, message, function(err, response) {
+            let action = middleware.action('pick(.*)', message);
+            expect(action).is.true;
+            done();
+        });
+    });
+
+    it('should match action as a string of mixed case', function(done) {
+        middleware.receive(bot, message, function(err, response) {
+            let action = middleware.action('pickFRUIT', message);
+            expect(action).is.true;
+            done();
+        });
+    });
+
+    it('should not match action as a string if only a substring matches', function(done) {
+        middleware.receive(bot, message, function(err, response) {
+            let action = middleware.action('pick', message);
+            expect(action).is.false;
+            done();
+        });
+    });
+
+    it('should match action as a RegExp', function(done) {
+        middleware.receive(bot, message, function(err, response) {
+            let action = middleware.action(/^pick/, message);
+            expect(action).is.true;
+            done();
+        });
+    });
+
+    it('should match action as a string in an array', function(done) {
+        middleware.receive(bot, message, function(err, response) {
+            let action = middleware.action(['blah', 'pickFruit'], message);
+            expect(action).is.true;
+            done();
+        });
+    });
+
+    it('should match action as a RegExp in an array', function(done) {
+        middleware.receive(bot, message, function(err, response) {
+            let action = middleware.action(['blah', /^(pick)/], message);
+            expect(action).is.true;
             done();
         });
     });
