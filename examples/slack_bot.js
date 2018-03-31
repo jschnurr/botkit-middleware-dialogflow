@@ -16,7 +16,7 @@ This bot demonstrates many of the core features of Botkit:
 
 # RUN THE BOT:
 
-  Get a Bot token from Slack:
+  Get a Bot API token from Slack:
 
     -> http://my.slack.com/services/new/bot
 
@@ -26,7 +26,7 @@ This bot demonstrates many of the core features of Botkit:
 
   Run your bot from the command line:
 
-    dialogflow=<api-token> token=<token> node example_bot.js
+    slack=<api-token> dialogflow=<access-token> node example_bot.js
 
 # USE THE BOT:
 
@@ -53,8 +53,8 @@ This bot demonstrates many of the core features of Botkit:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 
-if (!process.env.token) {
-    console.log('Error: Specify token in environment');
+if (!process.env.slack) {
+    console.log('Error: Specify slack API token in environment');
     process.exit(1);
 }
 
@@ -70,7 +70,7 @@ var slackController = Botkit.slackbot({
 });
 
 var slackBot = slackController.spawn({
-    token: process.env.token,
+    token: process.env.slack,
 });
 
 var dialogflowMiddleware = require('../')({
