@@ -2,7 +2,7 @@ var Botkit = require('botkit');
 var nock = require('nock');
 var expect = require('chai').expect;
 
-describe('receive() text', function() {
+describe('hears()', function() {
     // Dialogflow params
     var config = require('./config.json');
 
