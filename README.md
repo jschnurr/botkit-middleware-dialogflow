@@ -1,5 +1,6 @@
 <!-- markdownlint-disable first-line-h1 -->
 <!-- markdownlint-disable no-inline-html -->
+<!-- markdownlint-disable ul-indent -->
 
 [![Build Status](https://travis-ci.org/jschnurr/botkit-middleware-dialogflow.svg?branch=master)](https://travis-ci.org/jschnurr/botkit-middleware-dialogflow)
 
@@ -163,41 +164,45 @@ any entities found will be available on the message.entities property.
 
 ## Debugging
 
-To enable debug logging, specify `dialogflow-middleware` in the DEBUG environment variable,
-like this:
+To enable debug logging, specify `dialogflow-middleware` in the `DEBUG` environment variable, like this:
 
 ```bash
 DEBUG=dialogflow-middleware node your_awesome_bot.js
 ```
 
+By default, objects are only logged to a depth of 2. To recurse indefinitely, set `DEBUG_DEPTH` to `null`, like this:
+
+```bash
+DEBUG=dialogflow-middleware DEBUG_DEPTH=null node your_awesome_bot.js
+```
+
 # Change Log
 
-## 31-Mar-2018 v1.2.0
+*   31-Mar-2018 v1.2.0
 
-*   fix #5 add full support for regex and strings for intents and actions
-*   change slack example env variable to improve clarity
-*   add tests for existing functionality
+    *   fix #5 add full support for regex and strings for intents and actions
+    *   change slack example env variable to improve clarity
+    *   add tests for existing functionality
 
-## 9-Dec-2017 v1.1.0
+*   9-Dec-2017 v1.1.0
 
-*   BREAKING update criteria for skipping middleware automatically
-*   BREAKING remove skip_bot option
-*   fix linting errors
-*   travis and changelog added
-*   readme updates
-*   updated examples
-*   filter out self_message type from slack
-*   ignore editor files
-*   migrate to eslint and apply formatter to comply with .eslintrc rules
-*   add debug logging
+    *   BREAKING update criteria for skipping middleware automatically
+    *   BREAKING remove skip_bot option
+    *   fix linting errors
+    *   travis and changelog added
+    *   readme updates
+    *   updated examples
+    *   filter out self_message type from slack
+    *   ignore editor files
+    *   migrate to eslint and apply formatter to comply with .eslintrc rules
+    *   add debug logging
 
-## 3-Dec-2017 v1.0.1
+*   3-Dec-2017 v1.0.1
 
-*   rebrand as dialogflow
+    *   rebrand as dialogflow
 
-## pre-fork as botkit-middleware-apiai
-
-*   initial release
+*   pre-fork as botkit-middleware-apiai
+    *   initial release
 
 # Credit
 
