@@ -1,4 +1,8 @@
+<!-- markdownlint-disable first-line-h1 -->
+<!-- markdownlint-disable no-inline-html -->
+
 [![Build Status](https://travis-ci.org/jschnurr/botkit-middleware-dialogflow.svg?branch=master)](https://travis-ci.org/jschnurr/botkit-middleware-dialogflow)
+
 # Botkit Middleware Dialogflow
 
 This middleware plugin for [Botkit](http://howdy.ai/botkit) allows developers to integrate [Google Dialogflow](https://dialogflow.com/) (formerly [api.ai](https://api.ai)) with social platforms like Slack, Facebook and Twilio.
@@ -10,14 +14,14 @@ the results being immediately available to your bot.
 
 ## Function Overview
 
-#### [Receive Middleware](https://github.com/howdyai/botkit/blob/master/docs/middleware.md#receive-middleware)
+### [Receive Middleware](https://github.com/howdyai/botkit/blob/master/docs/middleware.md#receive-middleware)
 
-- `middleware.receive`: used to send the message content to Dialogflow, and add results to the message object.
+*   `middleware.receive`: used to send the message content to Dialogflow, and add results to the message object.
 
-#### [Hear Middleware](https://github.com/howdyai/botkit/blob/master/docs/middleware.md#hear-middleware)
+### [Hear Middleware](https://github.com/howdyai/botkit/blob/master/docs/middleware.md#hear-middleware)
 
-- `middleware.hears`: matches intent names as configured in [Dialogflow Console](https://console.dialogflow.com/)
-- `middleware.action`: matches action names configured in [Dialogflow Console](https://console.dialogflow.com/)
+*   `middleware.hears`: matches intent names as configured in [Dialogflow Console](https://console.dialogflow.com/)
+*   `middleware.action`: matches action names configured in [Dialogflow Console](https://console.dialogflow.com/)
 
 ## Installation
 
@@ -36,9 +40,12 @@ Next, create an [agent](https://dialogflow.com/docs/agents). Agents represent yo
 Understanding). Your bot will interact with your agent through the [Dialogflow API](https://dialogflow.com/docs/reference/agent/).
 
 The API keys can be found in the [agent settings](https://dialogflow.com/docs/agents#settings). Note the
-*Client access token*; this will be required by your bot.
+_Client access token_; this will be required by your bot.
 
-![Dialogflow Tokens](https://s8.postimg.org/bgepzb4d1/tokens.png)
+<p align="center">
+  <img src="images/tokens.png" />
+</p>
+<br>
 
 ### Configure a Channel
 
@@ -92,7 +99,10 @@ Patterns can be provided as an array or a comma separated string containing a li
 
 ```javascript
 // listen for literal string 'hello-intent' (case insensitive)
-slackController.hears('hello-intent', 'direct_message', dialogflowMiddleware.hears, function(bot, message) {
+slackController.hears('hello-intent', 'direct_message', dialogflowMiddleware.hears, function(
+    bot,
+    message
+) {
     bot.reply(message, 'Hello!');
 });
 ```
@@ -101,18 +111,28 @@ or
 
 ```javascript
 // listen for literal string 'hello-intent', or anything beginning with "HELLO" (case insensitive)
-slackController.hears(['hello-intent', /^HELLO.*/i], 'direct_message', dialogflowMiddleware.hears, function(bot, message) {
-    bot.reply(message, 'Hello!');
-});
+slackController.hears(
+    ['hello-intent', /^HELLO.*/i],
+    'direct_message',
+    dialogflowMiddleware.hears,
+    function(bot, message) {
+        bot.reply(message, 'Hello!');
+    }
+);
 ```
 
 or
 
 ```javascript
 // listen for comma-separated 'hello-intent' or 'greeting-intent'
-slackController.hears('hello-intent,greeting-intent', 'direct_message', dialogflowMiddleware.hears, function(bot, message) {
-    bot.reply(message, 'Hello!');
-});
+slackController.hears(
+    'hello-intent,greeting-intent',
+    'direct_message',
+    dialogflowMiddleware.hears,
+    function(bot, message) {
+        bot.reply(message, 'Hello!');
+    }
+);
 ```
 
 ## What it does
@@ -120,15 +140,19 @@ slackController.hears('hello-intent,greeting-intent', 'direct_message', dialogfl
 The middleware parses the Dialogflow API response and updates the message object. The raw result of the middleware call to [https://api.dialogflow.com/v1/query](https://dialogflow.com/docs/reference/agent/query) endpoint is made available on the `nlpResponse` property of the message.
 
 The full set of properties available after processing include:
-- `message.intent` for any named intents found as defined in Dialogflow
-- `message.entities` for any language entities defined in Dialogflow (dates, places, etc)
-- `message.fulfillment` for Dialogflow specific speech fulfillment
-- `message.confidence` for the confidence interval
-- `message.nlpResponse` for the raw Dialogflow response.
+
+*   `message.intent` for any named intents found as defined in Dialogflow
+*   `message.entities` for any language entities defined in Dialogflow (dates, places, etc)
+*   `message.fulfillment` for Dialogflow specific speech fulfillment
+*   `message.confidence` for the confidence interval
+*   `message.nlpResponse` for the raw Dialogflow response.
 
 Here is a diff of a message object, before and after middleware processing.
 
-![Message Object Diff](https://s8.postimg.org/450f8dak5/message_dif.png)
+<p align="center">
+  <img src="images/diff.png" />
+</p>
+<br>
 
 # Features
 
@@ -148,32 +172,32 @@ DEBUG=dialogflow-middleware node your_awesome_bot.js
 
 # Change Log
 
-### 31-Mar-2018 v1.2.0
+## 31-Mar-2018 v1.2.0
 
-- fix #5 add full support for regex and strings for  intents and actions
-- change slack example env variable to improve clarity
-- add tests for existing functionality
+*   fix #5 add full support for regex and strings for intents and actions
+*   change slack example env variable to improve clarity
+*   add tests for existing functionality
 
-### 9-Dec-2017 v1.1.0
+## 9-Dec-2017 v1.1.0
 
-- BREAKING update criteria for skipping middleware automatically
-- BREAKING remove skip_bot option
-- fix linting errors
-- travis and changelog added
-- readme updates
-- updated examples
-- filter out self_message type from slack
-- ignore editor files
-- migrate to eslint and apply formatter to comply with .eslintrc rules
-- add debug logging
+*   BREAKING update criteria for skipping middleware automatically
+*   BREAKING remove skip_bot option
+*   fix linting errors
+*   travis and changelog added
+*   readme updates
+*   updated examples
+*   filter out self_message type from slack
+*   ignore editor files
+*   migrate to eslint and apply formatter to comply with .eslintrc rules
+*   add debug logging
 
-### 3-Dec-2017 v1.0.1
+## 3-Dec-2017 v1.0.1
 
-- rebrand as dialogflow
+*   rebrand as dialogflow
 
-### pre-fork as botkit-middleware-apiai
+## pre-fork as botkit-middleware-apiai
 
-- initial release
+*   initial release
 
 # Credit
 
