@@ -12,20 +12,25 @@ module.exports = function(config) {
         config.minimum_confidence = 0.5;
     }
 
+    var ignoreTypePatterns = makeArrayOfRegex(config.ignoreType || []);
+
     var app = apiai(config.token);
 
     var middleware = {};
     var sessionId = uuid.v1();
 
     middleware.receive = function(bot, message, next) {
-        if (!message.text) {
+        if (!message.text || message.is_echo || message.type === 'self_message') {
             next();
             return;
         }
 
-        if (message.is_echo || message.type === 'self_message') {
-            next();
-            return;
+        for (let pattern of ignoreTypePatterns) {
+            if (pattern.test(message.type)) {
+                debug('skipping call to Dialogflow since type matched ', pattern);
+                next();
+                return;
+            }
         }
 
         debug('Sending message to dialogflow', message.text);

@@ -13,6 +13,12 @@ Dialogflow's Natural Language Processing (NLP) platform transforms real-world us
 and training are done in the convenient and powerful [Dialogflow Console](https://console.dialogflow.com/), with
 the results being immediately available to your bot.
 
+## Installation
+
+```bash
+npm install botkit-middleware-dialogflow --save
+```
+
 ## Function Overview
 
 ### [Receive Middleware](https://github.com/howdyai/botkit/blob/master/docs/middleware.md#receive-middleware)
@@ -23,12 +29,6 @@ the results being immediately available to your bot.
 
 *   `middleware.hears`: matches intent names as configured in [Dialogflow Console](https://console.dialogflow.com/)
 *   `middleware.action`: matches action names configured in [Dialogflow Console](https://console.dialogflow.com/)
-
-## Installation
-
-```bash
-npm install botkit-middleware-dialogflow --save
-```
 
 ## Usage
 
@@ -81,9 +81,10 @@ var slackBot = slackController.spawn({
 Create a middleware object which we'll be attaching to the controller:
 
 ```javascript
-var dialogflowMiddleware = require('botkit-middleware-dialogflow')({
+var options = {
     token: process.env.dialogflow,
-});
+};
+var dialogflowMiddleware = require('botkit-middleware-dialogflow')(options);
 ```
 
 Tell your Slackbot to use the middleware when it receives a message:
@@ -156,6 +157,16 @@ Here is a diff of a message object, before and after middleware processing.
 <br>
 
 # Features
+
+## Options
+
+When creating the middleware object, pass an options object with the following parameters.
+
+| Property           | Required |    Default     | Description                                                                                                                                                                                                                          |
+| ------------------ | :------- | :------------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| token              | Yes      |      N/A       | Client access token, from the Dialogflow Console.                                                                                                                                                                                    |
+| ignoreType         | No       | 'self_message' | Skip Dialogflow processing if the `type` matches the pattern. Useful to avoid unneccessary API calls. Patterns can be provided as a string, regex, or array of either.                                                               |
+| minimum_confidence | No       |      0.5       | Dialogflow returns a confidence (in the range 0.0 to 1.0) for each matching intent. This value is the cutoff - the `hears` and `action` middleware will only return a match for confidence values equal or greather than this value. |
 
 ## Entities
 

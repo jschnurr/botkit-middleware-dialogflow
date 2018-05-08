@@ -56,4 +56,38 @@ describe('receive() non-text inputs', function() {
             done();
         });
     });
+
+    it('should be a no-op if type matches specific ignoreType config', function(done) {
+        var bot2 = controller.spawn({
+            token: 'abc123',
+            ignoreType: ['facebook_postback'],
+        });
+
+        var message = {
+            type: 'facebook_postback',
+            text: 'payload',
+        };
+
+        middleware.receive(bot2, message, function(err, response) {
+            expect(response).is.undefined;
+            done();
+        });
+    });
+
+    it('should be a no-op if type matches regex pattern for ignoreType config', function(done) {
+        var bot2 = controller.spawn({
+            token: 'abc123',
+            ignoreType: /^facebook/,
+        });
+
+        var message = {
+            type: 'facebook_postback',
+            text: 'payload',
+        };
+
+        middleware.receive(bot2, message, function(err, response) {
+            expect(response).is.undefined;
+            done();
+        });
+    });
 });
