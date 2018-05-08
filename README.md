@@ -189,6 +189,12 @@ DEBUG=dialogflow-middleware DEBUG_DEPTH=null node your_awesome_bot.js
 
 # Change Log
 
+*   7-May-2018 v1.3.0
+
+    *   fix #9 add support for ignoreType to avoid unneccessary API calls to DF
+    *   docs: more debugging tips
+    *   docs: restore images in readme
+
 *   31-Mar-2018 v1.2.0
 
     *   fix #5 add full support for regex and strings for intents and actions
