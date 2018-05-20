@@ -32,6 +32,10 @@ module.exports = function(config) {
                 return;
             }
         }
+        
+        if(message.language) {
+            app.language = message.language;
+        }
 
         debug('Sending message to dialogflow', message.text);
         request = app.textRequest(message.text, {
