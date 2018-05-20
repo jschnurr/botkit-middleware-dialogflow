@@ -32,8 +32,8 @@ module.exports = function(config) {
                 return;
             }
         }
-        
-        if(message.language != null) {
+
+        if (message.language != null) {
             app.language = message.language;
         }
 
