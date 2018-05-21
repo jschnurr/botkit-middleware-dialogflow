@@ -18,18 +18,18 @@ describe('receive() text language support', function() {
     var middleware = require('../src/botkit-middleware-dialogflow')(config);
 
     // Setup message objects
-    var defaultMessage = {
+    const defaultMessage = {
         type: 'direct_message',
         text: 'hi',
     };
 
-    var englishMessage = {
+    const englishMessage = {
         type: 'direct_message',
         text: 'hi',
         lang: 'en',
     };
 
-    var frenchMessage = {
+    const frenchMessage = {
         type: 'direct_message',
         text: 'bonjour',
         lang: 'fr',
@@ -125,9 +125,10 @@ describe('receive() text language support', function() {
             });
         // .log(console.log);
 
-        middleware.receive(bot, clone(frenchMessage), function(err, response) {
+        let msg = clone(frenchMessage);
+        middleware.receive(bot, msg, function(err, response) {
             expect(nock.isDone()).is.true;
-            expect(frenchMessage.lang).is.equal('fr');
+            expect(msg.lang).is.equal('fr');
             done();
         });
     });
