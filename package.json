@@ -39,6 +39,7 @@
     "clone": "^1.0.4",
     "eslint": "^4.13.0",
     "eslint-config-google": "^0.9.1",
+    "lodash": "^4.17.10",
     "mocha": "^5.0.5",
     "nock": "^9.2.3"
   }
