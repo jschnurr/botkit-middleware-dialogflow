@@ -6,6 +6,25 @@
 
 # Botkit Middleware Dialogflow
 
+- [Botkit Middleware Dialogflow](#botkit-middleware-dialogflow)
+    - [Installation](#installation)
+    - [Function Overview](#function-overview)
+        - [Receive Middleware](#receive-middlewarehttps---githubcom-howdyai-botkit-blob-master-docs-middlewaremdreceive-middleware)
+        - [Hear Middleware](#hear-middlewarehttps---githubcom-howdyai-botkit-blob-master-docs-middlewaremdhear-middleware)
+    - [Usage](#usage)
+        - [Create a Dialogflow Agent](#create-a-dialogflow-agent)
+        - [Configure a Channel](#configure-a-channel)
+        - [Bot Setup](#bot-setup)
+    - [What it does](#what-it-does)
+- [Features](#features)
+    - [Options](#options)
+    - [Entities](#entities)
+    - [Language](#language)
+    - [Debugging](#debugging)
+- [Change Log](#change-log)
+- [Credit](#credit)
+- [License](#license)
+
 This middleware plugin for [Botkit](http://howdy.ai/botkit) allows developers to integrate [Google Dialogflow](https://dialogflow.com/) (formerly [api.ai](https://api.ai)) with social platforms like Slack, Facebook and Twilio.
 
 Dialogflow's Natural Language Processing (NLP) platform transforms real-world user input into structured
@@ -162,11 +181,11 @@ Here is a diff of a message object, before and after middleware processing.
 
 When creating the middleware object, pass an options object with the following parameters.
 
-| Property           | Required |    Default     | Description                                                                                                                                                                                                                          |
+| Property           | Required | Default        | Description                                                                                                                                                                                                                          |
 | ------------------ | :------- | :------------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| token              | Yes      |      N/A       | Client access token, from the Dialogflow Console.                                                                                                                                                                                    |
+| token              | Yes      | N/A            | Client access token, from the Dialogflow Console.                                                                                                                                                                                    |
 | ignoreType         | No       | 'self_message' | Skip Dialogflow processing if the `type` matches the pattern. Useful to avoid unneccessary API calls. Patterns can be provided as a string, regex, or array of either.                                                               |
-| minimum_confidence | No       |      0.5       | Dialogflow returns a confidence (in the range 0.0 to 1.0) for each matching intent. This value is the cutoff - the `hears` and `action` middleware will only return a match for confidence values equal or greather than this value. |
+| minimum_confidence | No       | 0.5            | Dialogflow returns a confidence (in the range 0.0 to 1.0) for each matching intent. This value is the cutoff - the `hears` and `action` middleware will only return a match for confidence values equal or greather than this value. |
 
 ## Entities
 
