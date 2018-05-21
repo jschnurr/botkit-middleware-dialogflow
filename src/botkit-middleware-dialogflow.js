@@ -33,7 +33,13 @@ module.exports = function(config) {
             }
         }
 
-        debug('Sending message to dialogflow', message.text);
+        if (message.lang) {
+            app.language = message.lang;
+        } else {
+            app.language = 'en';
+        }
+
+        debug('Sending message to dialogflow. language=%s, text=%s', app.language, message.text);
         request = app.textRequest(message.text, {
             sessionId: sessionId,
         });

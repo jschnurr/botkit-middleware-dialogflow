@@ -173,6 +173,19 @@ When creating the middleware object, pass an options object with the following p
 Dialogflow has the ability to extract entities (dates, places, etc) from user input. If you have configured your Agent this way,
 any entities found will be available on the message.entities property.
 
+## Language
+
+Dialogflow supports [multi-language agents](https://dialogflow.com/docs/multi-language). If the `message` object has a `lang` value set,
+the middleware will send it to Dialogflow and the response will be in that language, if the agent supports it.
+
+By default, Botkit `message` objects do not have a langauge specified, so Dialogflow defaults to `en`.
+
+For example, to invoke the Dialogflow agent in French, set your `message` as such:
+
+```javascript
+message.lang = 'fr';
+```
+
 ## Debugging
 
 To enable debug logging, specify `dialogflow-middleware` in the `DEBUG` environment variable, like this:
