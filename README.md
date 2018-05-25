@@ -221,6 +221,11 @@ DEBUG=dialogflow-middleware DEBUG_DEPTH=null node your_awesome_bot.js
 
 # Change Log
 
+*   24-May-2018 v1.4.0
+
+    *   feat support for sending queries to Dialogflow in different languages, specified by lang prop on message
+    *   docs add TOC to README
+
 *   7-May-2018 v1.3.0
 
     *   fix #9 add support for ignoreType to avoid unneccessary API calls to DF
