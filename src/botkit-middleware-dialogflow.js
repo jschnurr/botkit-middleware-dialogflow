@@ -39,9 +39,9 @@ module.exports = function(config) {
             app.language = 'en';
         }
 
-        debug('Sending message to dialogflow. language=%s, text=%s', app.language, message.text);
+        debug('Sending message to dialogflow. user=%s, language=%s, text=%s', message.user, app.language, message.text);
         request = app.textRequest(message.text, {
-            sessionId: sessionId,
+            sessionId: message.user,
         });
 
         request.on('response', function(response) {
