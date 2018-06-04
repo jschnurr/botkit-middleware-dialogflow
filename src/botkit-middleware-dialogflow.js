@@ -1,6 +1,5 @@
 var debug = require('debug')('dialogflow-middleware');
 var apiai = require('apiai');
-var uuid = require('node-uuid');
 var makeArrayOfRegex = require('./util').makeArrayOfRegex;
 
 module.exports = function(config) {
@@ -17,7 +16,6 @@ module.exports = function(config) {
     var app = apiai(config.token);
 
     var middleware = {};
-    var sessionId = uuid.v1();
 
     middleware.receive = function(bot, message, next) {
         if (!message.text || message.is_echo || message.type === 'self_message') {
