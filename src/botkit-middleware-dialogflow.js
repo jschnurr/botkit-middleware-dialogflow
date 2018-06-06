@@ -15,7 +15,7 @@ module.exports = function(config) {
     if (!config.sessionIdProps) {
         config.sessionIdProps = ['user', 'channel'];
     } else if (config.sessionIdProps.length == 0) {
-        throw new Error('sessionIdProps field must contain at least an element'); 
+        throw new Error('sessionIdProps field must contain at least an element');
     }
 
     var ignoreTypePatterns = makeArrayOfRegex(config.ignoreType || []);
@@ -49,14 +49,18 @@ module.exports = function(config) {
             if (message[config.sessionIdProps[i]]) {
                 requestSessionId += message[config.sessionIdProps[i]];
             } else {
-                debug('skipping call to Dialogflow since field %s doesn\'t exist in message object', config.sessionIdProps[i]);
+                debug('skipping call to Dialogflow since field "%s" doesn\'t exist in message object',
+                    config.sessionIdProps[i]);
                 next();
                 return;
-            }     
+            }
         }
-        requestSessionId = hasha(requestSessionId, {algorithm: 'md5'});
+        requestSessionId = hasha(requestSessionId, {
+            algorithm: 'md5'
+        });
 
-        debug('Sending message to dialogflow. sessionId=%s, language=%s, text=%s', requestSessionId, app.language, message.text);
+        debug('Sending message to dialogflow. sessionId=%s, language=%s, text=%s',
+            requestSessionId, app.language, message.text);
         request = app.textRequest(message.text, {
             sessionId: requestSessionId,
         });
