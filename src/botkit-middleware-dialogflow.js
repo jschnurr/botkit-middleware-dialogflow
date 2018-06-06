@@ -11,6 +11,10 @@ module.exports = function(config) {
         config.minimum_confidence = 0.5;
     }
 
+    if (!config.sessionIdProps) {
+        config.sessionIdProps = ['user', 'channel'];
+    }
+
     var ignoreTypePatterns = makeArrayOfRegex(config.ignoreType || []);
 
     var app = apiai(config.token);
@@ -37,9 +41,16 @@ module.exports = function(config) {
             app.language = 'en';
         }
 
+        var requestSessionId = "";
+        for (var i = 0; i < config.sessionIdProps.length; i++) {
+            requestSessionId += message[config.sessionIdProps[i]];
+        }
+
+        console.log("SessiodId is: " + requestSessionId);
+
         debug('Sending message to dialogflow. user=%s, language=%s, text=%s', message.user, app.language, message.text);
         request = app.textRequest(message.text, {
-            sessionId: message.user,
+            sessionId: requestSessionId,
         });
 
         request.on('response', function(response) {
