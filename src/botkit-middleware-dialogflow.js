@@ -56,7 +56,7 @@ module.exports = function(config) {
             }
         }
         requestSessionId = hasha(requestSessionId, {
-            algorithm: 'md5'
+            algorithm: 'md5',
         });
 
         debug('Sending message to dialogflow. sessionId=%s, language=%s, text=%s',
