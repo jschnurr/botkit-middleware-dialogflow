@@ -20,6 +20,8 @@ describe('action()', function() {
     var message = {
         type: 'direct_message',
         text: 'pick an apple',
+        user: 'test_user',
+        channel: 'test_channel',
     };
 
     // response from DialogFlow api call to /query endpoint

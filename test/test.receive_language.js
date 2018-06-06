@@ -21,18 +21,24 @@ describe('receive() text language support', function() {
     const defaultMessage = {
         type: 'direct_message',
         text: 'hi',
+        user: 'test_user',
+        channel: 'test_channel',
     };
 
     const englishMessage = {
         type: 'direct_message',
         text: 'hi',
         lang: 'en',
+        user: 'test_user',
+        channel: 'test_channel',
     };
 
     const frenchMessage = {
         type: 'direct_message',
         text: 'bonjour',
         lang: 'fr',
+        user: 'test_user',
+        channel: 'test_channel',
     };
 
     // tests
