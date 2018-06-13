@@ -1,7 +1,7 @@
 var debug = require('debug')('dialogflow-middleware');
 var apiai = require('apiai');
 var makeArrayOfRegex = require('./util').makeArrayOfRegex;
-const hasha = require('hasha');
+var generateSessionId = require('./util').generateSessionId;
 
 module.exports = function(config) {
     if (!config || !config.token) {
@@ -14,8 +14,6 @@ module.exports = function(config) {
 
     if (!config.sessionIdProps) {
         config.sessionIdProps = ['user', 'channel'];
-    } else if (config.sessionIdProps.length == 0) {
-        throw new Error('sessionIdProps field must contain at least an element');
     }
 
     var ignoreTypePatterns = makeArrayOfRegex(config.ignoreType || []);
@@ -44,23 +42,14 @@ module.exports = function(config) {
             app.language = 'en';
         }
 
-        var requestSessionId = '';
-        for (var i = 0; i < config.sessionIdProps.length; i++) {
-            if (message[config.sessionIdProps[i]]) {
-                requestSessionId += message[config.sessionIdProps[i]];
-            } else {
-                debug('skipping call to Dialogflow since field "%s" doesn\'t exist in message object',
-                    config.sessionIdProps[i]);
-                next();
-                return;
-            }
-        }
-        requestSessionId = hasha(requestSessionId, {
-            algorithm: 'md5',
-        });
+        var requestSessionId = generateSessionId(config, message);
 
-        debug('Sending message to dialogflow. sessionId=%s, language=%s, text=%s',
-            requestSessionId, app.language, message.text);
+        debug(
+            'Sending message to dialogflow. sessionId=%s, language=%s, text=%s',
+            requestSessionId,
+            app.language,
+            message.text
+        );
         request = app.textRequest(message.text, {
             sessionId: requestSessionId,
         });
