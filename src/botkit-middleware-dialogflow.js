@@ -2,6 +2,7 @@ var debug = require('debug')('dialogflow-middleware');
 var apiai = require('apiai');
 var makeArrayOfRegex = require('./util').makeArrayOfRegex;
 var generateSessionId = require('./util').generateSessionId;
+var structProtoToJson = require('./structjson').structProtoToJson;
 
 module.exports = function(config) {
     if (!config || !config.token) {

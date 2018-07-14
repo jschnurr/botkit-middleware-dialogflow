@@ -3,28 +3,6 @@ var nock = require('nock');
 var expect = require('chai').expect;
 var clone = require('clone');
 
-process.env.GOOGLE_APPLICATION_CREDENTIALS = __dirname + '/credentials.json';
-
-/**
- * Mocks a gRPC method call.
- *
- * @param {object} expectedRequest - the mocked request
- * @param {object} response - the mocked response
- * @param {error} error - the mocked error
- * @return {function} callback function
- */
-function mockSimpleGrpcMethod(expectedRequest, response, error) {
-    return function(actualRequest, options, callback) {
-        if (error) {
-            callback(error);
-        } else if (response) {
-            callback(null, response);
-        } else {
-            callback(null);
-        }
-    };
-}
-
 describe('action()', function() {
     // Dialogflow params
     var config = require('./config.json');
@@ -48,87 +26,58 @@ describe('action()', function() {
 
     // response from DialogFlow api call to /query endpoint
     var apiResponse = {
-        responseId: '7f9da300-c16a-48be-b52e-f09157d34215',
-        queryResult: {
-            fulfillmentMessages: [{
-                platform: 'PLATFORM_UNSPECIFIED',
-                text: {
-                    text: ['Okay how many apples?'],
-                },
-                message: 'text',
-            }],
-            outputContexts: [],
-            queryText: 'I need apples',
-            speechRecognitionConfidence: 0,
+        id: '3622be70-cb49-4796-a4fa-71f16f7b5600',
+        lang: 'en',
+        result: {
             action: 'pickFruit',
-            parameters: {
-                fields: {
-                    fruits: {
-                        stringValue: 'apple',
-                        kind: 'stringValue',
+            actionIncomplete: false,
+            contexts: ['shop'],
+            fulfillment: {
+                messages: [
+                    {
+                        platform: 'google',
+                        textToSpeech: 'Okay how many apples?',
+                        type: 'simple_response',
                     },
-                },
+                    {
+                        platform: 'google',
+                        textToSpeech: 'Okay. How many apples?',
+                        type: 'simple_response',
+                    },
+                    {
+                        speech: 'Okay how many apples?',
+                        type: 0,
+                    },
+                ],
+                speech: 'Okay how many apples?',
             },
-            allRequiredParamsPresent: true,
-            fulfillmentText: 'Okay how many apples?',
-            webhookSource: '',
-            webhookPayload: null,
-            intent: {
-                inputContextNames: [],
-                events: [],
-                trainingPhrases: [],
-                outputContexts: [],
-                parameters: [],
-                messages: [],
-                defaultResponsePlatforms: [],
-                followupIntentInfo: [],
-                name: 'projects/botkit-dialogflow/agent/intents/4f01bbf2-41d7-41cc-9c9f-0969a8fa588c',
-                displayName: 'add-to-list',
-                priority: 0,
-                isFallback: false,
-                webhookState: 'WEBHOOK_STATE_UNSPECIFIED',
-                action: '',
-                resetContexts: false,
-                rootFollowupIntentName: '',
-                parentFollowupIntentName: '',
-                mlDisabled: false,
+            metadata: {
+                intentId: '21478be9-bea6-449b-bcca-c5f009c0a5a1',
+                intentName: 'add-to-list',
+                webhookForSlotFillingUsed: 'false',
+                webhookUsed: 'false',
             },
-            intentDetectionConfidence: 1,
-            diagnosticInfo: {
-                fields: {},
+            parameters: {
+                fruit: ['apples'],
             },
-            languageCode: 'en',
+            resolvedQuery: 'I need apples',
+            score: 1,
+            source: 'agent',
         },
-        webhookStatus: null,
+        sessionId: '12345',
+        status: {
+            code: 200,
+            errorType: 'success',
+        },
+        timestamp: '2017-09-19T21:16:44.832Z',
     };
-
-    // Mock request
-    var formattedSession = middleware.app.sessionPath('[PROJECT]', '[SESSION]');
-    var queryInput = {};
-    var request = {
-        session: formattedSession,
-        queryInput: queryInput,
-    };
-
-    // Mock Grpc layer
-    middleware.app._innerApiCalls.detectIntent = mockSimpleGrpcMethod(
-        request,
-        apiResponse
-    );
 
     before(function() {
         nock.disableNetConnect();
 
-        nock('https://www.googleapis.com:443')
-            .post('/oauth2/v4/token', undefined, {
-                reqheaders: {
-                    'content-type': 'application/x-www-form-urlencoded',
-                },
-            })
-            .reply(200, {
-                access_token: 'abc123',
-                expires_in: 3600,
-            });
+        nock(config.url)
+            .post('/' + config.version + '/query?v=' + config.protocol)
+            .reply(200, apiResponse);
     });
 
     after(function() {

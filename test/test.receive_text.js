@@ -1,6 +1,29 @@
 var Botkit = require('botkit');
 var nock = require('nock');
 var expect = require('chai').expect;
+var structProtoToJson = require('../src/structjson').structProtoToJson;
+
+process.env.GOOGLE_APPLICATION_CREDENTIALS = __dirname + '/credentials.json';
+
+/**
+ * Mocks a gRPC method call.
+ *
+ * @param {object} expectedRequest - the mocked request
+ * @param {object} response - the mocked response
+ * @param {error} error - the mocked error
+ * @return {function} callback function
+ */
+function mockSimpleGrpcMethod(expectedRequest, response, error) {
+    return function(actualRequest, options, callback) {
+        if (error) {
+            callback(error);
+        } else if (response) {
+            callback(null, response);
+        } else {
+            callback(null);
+        }
+    };
+}
 
 describe('receive() text', function() {
     // Dialogflow params
@@ -38,35 +61,87 @@ describe('receive() text', function() {
 
     // response from DialogFlow api call to /query endpoint
     var expectedDfData = {
-        id: '05a7ed32-6572-45a7-a27e-465959df5f9f',
-        timestamp: '2018-03-31T14:16:54.369Z',
-        lang: 'en',
-        result: {
-            source: 'agent',
-            resolvedQuery: 'hi',
-            action: '',
-            actionIncomplete: false,
-            parameters: {},
-            contexts: [],
-            metadata: {
-                intentId: 'bd8fdabb-2fd6-4018-a3a5-0c57c41f65c1',
-                webhookUsed: 'false',
-                webhookForSlotFillingUsed: 'false',
-                intentName: 'hello-intent',
+        responseId: '7f9da300-c16a-48be-b52e-f09157d34215',
+        queryResult: {
+            fulfillmentMessages: [{
+                platform: 'PLATFORM_UNSPECIFIED',
+                text: {
+                    text: ['Okay how many apples?'],
+                },
+                message: 'text',
+            }],
+            outputContexts: [],
+            queryText: 'I need apples',
+            speechRecognitionConfidence: 0,
+            action: 'pickFruit',
+            parameters: {
+                fields: {
+                    fruits: {
+                        stringValue: 'apple',
+                        kind: 'stringValue',
+                    },
+                },
             },
-            fulfillment: {speech: '', messages: [{type: 0, speech: ''}]},
-            score: 1,
+            allRequiredParamsPresent: true,
+            fulfillmentText: 'Okay how many apples?',
+            webhookSource: '',
+            webhookPayload: null,
+            intent: {
+                inputContextNames: [],
+                events: [],
+                trainingPhrases: [],
+                outputContexts: [],
+                parameters: [],
+                messages: [],
+                defaultResponsePlatforms: [],
+                followupIntentInfo: [],
+                name: 'projects/botkit-dialogflow/agent/intents/4f01bbf2-41d7-41cc-9c9f-0969a8fa588c',
+                displayName: 'add-to-list',
+                priority: 0,
+                isFallback: false,
+                webhookState: 'WEBHOOK_STATE_UNSPECIFIED',
+                action: '',
+                resetContexts: false,
+                rootFollowupIntentName: '',
+                parentFollowupIntentName: '',
+                mlDisabled: false,
+            },
+            intentDetectionConfidence: 1,
+            diagnosticInfo: {
+                fields: {},
+            },
+            languageCode: 'en',
         },
-        status: {code: 200, errorType: 'success', webhookTimedOut: false},
-        sessionId: '261d37f0-34ee-11e8-bcca-67db967c2594',
+        webhookStatus: null,
     };
+
+    // Mock request
+    var formattedSession = middleware.app.sessionPath('[PROJECT]', '[SESSION]');
+    var queryInput = {};
+    var request = {
+        session: formattedSession,
+        queryInput: queryInput,
+    };
+
+    // Mock Grpc layer
+    middleware.app._innerApiCalls.detectIntent = mockSimpleGrpcMethod(
+        request,
+        expectedDfData
+    );
 
     before(function() {
         nock.disableNetConnect();
 
-        nock(config.url)
-            .post('/' + config.version + '/query?v=' + config.protocol)
-            .reply(200, expectedDfData);
+        nock('https://www.googleapis.com:443')
+            .post('/oauth2/v4/token', undefined, {
+                reqheaders: {
+                    'content-type': 'application/x-www-form-urlencoded',
+                },
+            })
+            .reply(200, {
+                access_token: 'abc123',
+                expires_in: 3600,
+            });
     });
 
     after(function() {
@@ -75,13 +150,14 @@ describe('receive() text', function() {
 
     it('should make a call to the Dialogflow api', function(done) {
         middleware.receive(bot, message, function(err, response) {
-            expect(nock.isDone()).is.true;
+            expect(err).is.undefined;
             done();
         });
     });
 
     it('should add custom fields to the message object', function(done) {
         middleware.receive(bot, message, function(err, response) {
+            expect(err).is.undefined;
             expect(message)
                 .to.be.an('object')
                 .that.includes.all.keys('nlpResponse', 'intent', 'entities', 'fulfillment', 'confidence');
@@ -98,28 +174,29 @@ describe('receive() text', function() {
 
     it('should correctly copy result.metadata.intentName to the message.intent key', function(done) {
         middleware.receive(bot, message, function(err, response) {
-            expect(message.intent).to.eql(expectedDfData.result.metadata.intentName);
+            expect(message.intent).to.eql(expectedDfData.queryResult.intent.displayName);
             done();
         });
     });
 
     it('should correctly copy result.parameters to the message.entities key', function(done) {
         middleware.receive(bot, message, function(err, response) {
-            expect(message.entities).to.eql(expectedDfData.result.parameters);
+            expect(message.entities).to.eql(structProtoToJson(expectedDfData.queryResult.parameters));
             done();
         });
     });
 
     it('should correctly copy result.fulfillment to the message.fulfillment key', function(done) {
         middleware.receive(bot, message, function(err, response) {
-            expect(message.fulfillment).to.eql(expectedDfData.result.fulfillment);
+            expect(message.fulfillment.speech).to.eql(expectedDfData.queryResult.fulfillmentText);
+            expect(message.fulfillment.messages).to.deep.equal(expectedDfData.queryResult.fulfillmentMessages);
             done();
         });
     });
 
     it('should correctly copy result.score to the message.confidence key', function(done) {
         middleware.receive(bot, message, function(err, response) {
-            expect(message.confidence).to.eql(expectedDfData.result.score);
+            expect(message.confidence).to.eql(expectedDfData.queryResult.intentDetectionConfidence);
             done();
         });
     });

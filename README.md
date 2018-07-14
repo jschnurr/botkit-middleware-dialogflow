@@ -13,6 +13,7 @@
         - [Hear Middleware](#hear-middlewarehttps---githubcom-howdyai-botkit-blob-master-docs-middlewaremdhear-middleware)
     - [Usage](#usage)
         - [Create a Dialogflow Agent](#create-a-dialogflow-agent)
+        - [Set up authentication](#set-up-google-cloud-authentication)
         - [Configure a Channel](#configure-a-channel)
         - [Bot Setup](#bot-setup)
     - [What it does](#what-it-does)

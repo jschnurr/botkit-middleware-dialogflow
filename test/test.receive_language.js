@@ -1,8 +1,9 @@
 var Botkit = require('botkit');
 var nock = require('nock');
 var expect = require('chai').expect;
-var _ = require('lodash');
 var clone = require('clone');
+
+process.env.GOOGLE_APPLICATION_CREDENTIALS = __dirname + '/credentials.json';
 
 describe('receive() text language support', function() {
     // Dialogflow params
@@ -44,6 +45,17 @@ describe('receive() text language support', function() {
     // tests
     before(function() {
         nock.disableNetConnect();
+
+        nock('https://www.googleapis.com:443')
+            .post('/oauth2/v4/token', undefined, {
+                reqheaders: {
+                    'content-type': 'application/x-www-form-urlencoded',
+                },
+            })
+            .reply(200, {
+                access_token: 'abc123',
+                expires_in: 3600,
+            });
     });
 
     after(function() {
@@ -51,14 +63,17 @@ describe('receive() text language support', function() {
     });
 
     it('should call the Dialogflow API with en if no language is specified on message object', function(done) {
-        nock('https://api.api.ai:443', {encodedQueryParams: true})
-            .post('/v1/query', _.matches({lang: 'en', query: 'hi'}))
-            .query({v: '20150910'})
-            .reply(200);
-        // .log(console.log);
+        // Mock Grpc layer
+        middleware.app._innerApiCalls.detectIntent = function(actualRequest, options, callback) {
+            if (actualRequest.queryInput.text.languageCode === 'en') {
+                callback(null);
+            } else {
+                callback('Invalid languageCode');
+            }
+        };
 
         middleware.receive(bot, clone(defaultMessage), function(err, response) {
-            expect(nock.isDone()).is.true;
+            expect(err).is.undefined;
             done();
         });
     });
@@ -66,74 +81,100 @@ describe('receive() text language support', function() {
     // the language used by the nodejs client for Dialogflow is sticky over subsequent calls
     // Need to confirm we're resetting it.
     it('should call the API with correct language over subsequent calls in different languages', function(done) {
-        nock('https://api.api.ai:443', {encodedQueryParams: true})
-            .post('/v1/query', _.matches({lang: 'en', query: 'hi'}))
-            .query({v: '20150910'})
-            .reply(200);
-        // .log(console.log);
-
+        // English
+        middleware.app._innerApiCalls.detectIntent = function(actualRequest, options, callback) {
+            if (actualRequest.queryInput.text.languageCode === 'en') {
+                callback(null);
+            } else {
+                callback('Invalid languageCode');
+            }
+        };
         middleware.receive(bot, clone(englishMessage), function(err, response) {
-            expect(nock.isDone()).is.true;
+            expect(err).is.undefined;
         });
 
-        nock('https://api.api.ai:443', {encodedQueryParams: true})
-            .post('/v1/query', _.matches({lang: 'fr', query: 'bonjour'}))
-            .query({v: '20150910'})
-            .reply(200);
-        // .log(console.log);
-
+        // French
+        middleware.app._innerApiCalls.detectIntent = function(actualRequest, options, callback) {
+            if (actualRequest.queryInput.text.languageCode === 'fr') {
+                callback(null);
+            } else {
+                callback('Invalid languageCode');
+            }
+        };
         middleware.receive(bot, clone(frenchMessage), function(err, response) {
-            expect(nock.isDone()).is.true;
+            expect(err).is.undefined;
         });
 
-        nock('https://api.api.ai:443', {encodedQueryParams: true})
-            .post('/v1/query', _.matches({lang: 'en', query: 'hi'}))
-            .query({v: '20150910'})
-            .reply(200);
-        // .log(console.log);
-
+        // Default
+        middleware.app._innerApiCalls.detectIntent = function(actualRequest, options, callback) {
+            if (actualRequest.queryInput.text.languageCode === 'en') {
+                callback(null);
+            } else {
+                callback('Invalid languageCode');
+            }
+        };
         middleware.receive(bot, clone(defaultMessage), function(err, response) {
-            expect(nock.isDone()).is.true;
+            expect(err).is.undefined;
         });
 
         done();
     });
 
     it('should flow the language set on the message object through to the response', function(done) {
-        nock('https://api.api.ai:443', {encodedQueryParams: true})
-            .post('/v1/query', _.matches({lang: 'fr', query: 'bonjour'}))
-            .query({v: '20150910'})
-            .reply(200, {
-                id: '7cfc3ba7-cf87-4319-8c7a-0ba2f598e813',
-                timestamp: '2018-05-21T17:35:29.91Z',
-                lang: 'fr',
-                result: {
-                    source: 'agent',
-                    resolvedQuery: 'bonjour',
-                    action: '',
-                    actionIncomplete: false,
-                    parameters: {},
-                    contexts: [],
-                    metadata: {
-                        intentId: 'bd8fdabb-2fd6-4018-a3a5-0c57c41f65c1',
-                        webhookUsed: 'false',
-                        webhookForSlotFillingUsed: 'false',
-                        intentName: 'hello-intent',
+        middleware.app._innerApiCalls.detectIntent = function(actualRequest, options, callback) {
+            callback(null, {
+                responseId: '7cfc3ba7-cf87-4319-8c7a-0ba2f598e813',
+                queryResult: {
+                    fulfillmentMessages: [{
+                        platform: 'PLATFORM_UNSPECIFIED',
+                        text: {
+                            text: ['comment vas-tu aujourd\'hui'],
+                        },
+                        message: 'text',
+                    }],
+                    outputContexts: [],
+                    queryText: 'bonjour',
+                    speechRecognitionConfidence: 0,
+                    action: 'hello-intent',
+                    parameters: {
+                        fields: {},
                     },
-                    fulfillment: {
-                        speech: 'comment vas-tu aujourd\'hui',
-                        messages: [{type: 0, speech: 'comment vas-tu aujourd\'hui'}],
+                    allRequiredParamsPresent: true,
+                    fulfillmentText: 'comment vas-tu aujourd\'hui',
+                    webhookSource: '',
+                    webhookPayload: null,
+                    intent: {
+                        inputContextNames: [],
+                        events: [],
+                        trainingPhrases: [],
+                        outputContexts: [],
+                        parameters: [],
+                        messages: [],
+                        defaultResponsePlatforms: [],
+                        followupIntentInfo: [],
+                        name: 'projects/botkit-middleware/agent/intents/a6bd6dd4-b934-4dc2-ac84-fee6b4c428d5',
+                        displayName: 'hello-intent',
+                        priority: 0,
+                        isFallback: false,
+                        webhookState: 'WEBHOOK_STATE_UNSPECIFIED',
+                        action: '',
+                        resetContexts: false,
+                        rootFollowupIntentName: '',
+                        parentFollowupIntentName: '',
+                        mlDisabled: false,
                     },
-                    score: 1,
+                    intentDetectionConfidence: 1,
+                    diagnosticInfo: {
+                        fields: {},
+                    },
+                    languageCode: 'fr',
                 },
-                status: {code: 200, errorType: 'success'},
-                sessionId: '563be240-5d1d-11e8-9139-bfbb9dca30b5',
+                webhookStatus: null,
             });
-        // .log(console.log);
+        };
 
         let msg = clone(frenchMessage);
         middleware.receive(bot, msg, function(err, response) {
-            expect(nock.isDone()).is.true;
             expect(msg.lang).is.equal('fr');
             done();
         });
