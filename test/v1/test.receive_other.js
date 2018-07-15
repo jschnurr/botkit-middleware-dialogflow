@@ -1,93 +1,96 @@
-var Botkit = require('botkit');
-var nock = require('nock');
-var expect = require('chai').expect;
+const Botkit = require('botkit');
+const nock = require('nock');
+const expect = require('chai').expect;
 
 describe('receive() non-text inputs', function() {
-    // Dialogflow params
-    var config = require('./config.json');
+  // Dialogflow params
+  const config = require('./config.json');
 
-    // Botkit params
-    var controller = Botkit.slackbot();
-    var bot = controller.spawn({
-        token: 'abc123',
+  // Botkit params
+  const controller = Botkit.slackbot();
+  const bot = controller.spawn({
+    token: 'abc123',
+  });
+
+  // Dialogflow middleware
+  const middleware = require('../../src/botkit-middleware-dialogflow')({
+    version: 'v1',
+    token: 'abc',
+  });
+
+  before(function() {
+    nock.disableNetConnect();
+  });
+
+  after(function() {
+    nock.cleanAll();
+  });
+
+  it('should be a no-op if text field is missing', function(done) {
+    const message = {
+      type: 'user_typing',
+    };
+
+    middleware.receive(bot, message, function(err, response) {
+      expect(response).is.undefined;
+      done();
+    });
+  });
+
+  it('should be a no-op if message is echo', function(done) {
+    const message = {
+      type: 'is_echo',
+    };
+
+    middleware.receive(bot, message, function(err, response) {
+      expect(response).is.undefined;
+      done();
+    });
+  });
+
+  it('should be a no-op if text field is missing', function(done) {
+    const message = {
+      type: 'self_message',
+      text: 'Hello!',
+    };
+
+    middleware.receive(bot, message, function(err, response) {
+      expect(response).is.undefined;
+      done();
+    });
+  });
+
+  it('should be a no-op if type matches specific ignoreType config', function(done) {
+    const bot2 = controller.spawn({
+      token: 'abc123',
+      ignoreType: ['facebook_postback'],
     });
 
-    // Dialogflow middleware
-    var middleware = require('../src/botkit-middleware-dialogflow')(config);
+    const message = {
+      type: 'facebook_postback',
+      text: 'payload',
+    };
 
-    before(function() {
-        nock.disableNetConnect();
+    middleware.receive(bot2, message, function(err, response) {
+      expect(response).is.undefined;
+      done();
+    });
+  });
+
+  it('should be a no-op if type matches regex pattern for ignoreType config', function(done) {
+    const bot2 = controller.spawn({
+      token: 'abc123',
+      ignoreType: /^facebook/,
     });
 
-    after(function() {
-        nock.cleanAll();
+    const message = {
+      type: 'facebook_postback',
+      text: 'payload',
+    };
+
+    middleware.receive(bot2, message, function(err, response) {
+      expect(response).is.undefined;
+      done();
     });
-
-    it('should be a no-op if text field is missing', function(done) {
-        var message = {
-            type: 'user_typing',
-        };
-
-        middleware.receive(bot, message, function(err, response) {
-            expect(response).is.undefined;
-            done();
-        });
-    });
-
-    it('should be a no-op if message is echo', function(done) {
-        var message = {
-            type: 'is_echo',
-        };
-
-        middleware.receive(bot, message, function(err, response) {
-            expect(response).is.undefined;
-            done();
-        });
-    });
-
-    it('should be a no-op if text field is missing', function(done) {
-        var message = {
-            type: 'self_message',
-            text: 'Hello!',
-        };
-
-        middleware.receive(bot, message, function(err, response) {
-            expect(response).is.undefined;
-            done();
-        });
-    });
-
-    it('should be a no-op if type matches specific ignoreType config', function(done) {
-        var bot2 = controller.spawn({
-            token: 'abc123',
-            ignoreType: ['facebook_postback'],
-        });
-
-        var message = {
-            type: 'facebook_postback',
-            text: 'payload',
-        };
-
-        middleware.receive(bot2, message, function(err, response) {
-            expect(response).is.undefined;
-            done();
-        });
-    });
-
-    it('should be a no-op if type matches regex pattern for ignoreType config', function(done) {
-        var bot2 = controller.spawn({
-            token: 'abc123',
-            ignoreType: /^facebook/,
-        });
-
-        var message = {
-            type: 'facebook_postback',
-            text: 'payload',
-        };
-
-        middleware.receive(bot2, message, function(err, response) {
-            expect(response).is.undefined;
-            done();
-        });
-    });
+  });
 });

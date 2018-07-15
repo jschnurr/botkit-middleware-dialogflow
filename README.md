@@ -9,11 +9,10 @@
 - [Botkit Middleware Dialogflow](#botkit-middleware-dialogflow)
     - [Installation](#installation)
     - [Function Overview](#function-overview)
-        - [Receive Middleware](#receive-middlewarehttps---githubcom-howdyai-botkit-blob-master-docs-middlewaremdreceive-middleware)
-        - [Hear Middleware](#hear-middlewarehttps---githubcom-howdyai-botkit-blob-master-docs-middlewaremdhear-middleware)
+        - [Receive Middleware](#receive-middleware)
+        - [Hear Middleware](#hear-middleware)
     - [Usage](#usage)
         - [Create a Dialogflow Agent](#create-a-dialogflow-agent)
-        - [Set up authentication](#set-up-google-cloud-authentication)
         - [Configure a Channel](#configure-a-channel)
         - [Bot Setup](#bot-setup)
     - [What it does](#what-it-does)
@@ -188,6 +187,7 @@ When creating the middleware object, pass an options object with the following p
 | ignoreType         | No       | 'self_message' | Skip Dialogflow processing if the `type` matches the pattern. Useful to avoid unneccessary API calls. Patterns can be provided as a string, regex, or array of either.                                                               |
 | minimum_confidence | No       | 0.5            | Dialogflow returns a confidence (in the range 0.0 to 1.0) for each matching intent. This value is the cutoff - the `hears` and `action` middleware will only return a match for confidence values equal or greather than this value. |
 | sessionIdProps | No | ['user', 'channel'] | Session ID's help Dialogflow preserve context across multiple calls. By default, this session ID is an MD5 hash of the `user` and `channel` properties on the `message` object. If you'd like to use different properties, provide them as a string or array or strings. If none of the desired properties are available on a `message`, the middleware will use a random session ID instead. 
+| lang     | No       | 'en' | if the `message` object does not have a `lang` property, use this language as the default.
 
 ## Entities
 

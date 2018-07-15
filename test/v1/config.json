@@ -1,6 +1,5 @@
 {
-    "url": "https://api.api.ai:443",
-    "protocol": "20150910",
-    "version": "v1",
-    "token": "abc123"
+  "url": "https://api.api.ai:443",
+  "protocol": "20150910",
+  "version": "v1"
 }
