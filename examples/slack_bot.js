@@ -52,35 +52,37 @@ This bot demonstrates many of the core features of Botkit:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-
 if (!process.env.slack) {
-    console.log('Error: Specify slack API token in environment');
-    process.exit(1);
+  console.log('Error: Specify slack API token in environment');
+  process.exit(1);
 }
 
 if (!process.env.dialogflow) {
-    console.log('Error: Specify dialogflow in environment');
-    process.exit(1);
+  console.log('Error: Specify dialogflow in environment');
+  process.exit(1);
 }
 
-var Botkit = require('botkit');
+const Botkit = require('botkit');
 
-var slackController = Botkit.slackbot({
-    debug: true,
+const slackController = Botkit.slackbot({
+  debug: true,
 });
 
-var slackBot = slackController.spawn({
-    token: process.env.slack,
+const slackBot = slackController.spawn({
+  token: process.env.slack,
 });
 
-var dialogflowMiddleware = require('../')({
-    token: process.env.dialogflow,
+const dialogflowMiddleware = require('../')({
+  token: process.env.dialogflow,
 });
 
 slackController.middleware.receive.use(dialogflowMiddleware.receive);
 slackBot.startRTM();
 
 /* note this uses example middlewares defined above */
-slackController.hears(['hello-intent'], 'direct_message', dialogflowMiddleware.hears, function(bot, message) {
-    bot.reply(message, 'Hello!');
+slackController.hears(['hello-intent'], 'direct_message', dialogflowMiddleware.hears, function(
+  bot,
+  message
+) {
+  bot.reply(message, 'Hello!');
 });
