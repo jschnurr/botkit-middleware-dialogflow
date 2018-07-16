@@ -235,20 +235,25 @@ To use the legacy V1 version of the Dialogflow API:
 
 # Change Log
 
+*   16-July-2018 v2.0.0
+    *   refactor to support Dialogflow API V2
+    *   readme updates
+    *   defaults and examples now use Dialogflow API V2
+
 *   12-June-2018 v1.4.1
-    *   feat sessionId sent to DF based on user and channel properties of message
-    *   feat allow customization of sessionId to use different properties as desired
+    *   sessionId sent to DF based on user and channel properties of message
+    *   allow customization of sessionId to use different properties as desired
 
 *   24-May-2018 v1.4.0
 
-    *   feat support for sending queries to Dialogflow in different languages, specified by lang prop on message
-    *   docs add TOC to README
+    *   support for sending queries to Dialogflow in different languages, specified by lang prop on message
+    *   add TOC to README
 
 *   7-May-2018 v1.3.0
 
     *   fix #9 add support for ignoreType to avoid unneccessary API calls to DF
-    *   docs: more debugging tips
-    *   docs: restore images in readme
+    *   more debugging tips in README
+    *   restore images in readme
 
 *   31-Mar-2018 v1.2.0
 
@@ -258,9 +263,8 @@ To use the legacy V1 version of the Dialogflow API:
 
 *   9-Dec-2017 v1.1.0
 
-    *   BREAKING update criteria for skipping middleware automatically
-    *   BREAKING remove skip_bot option
-    *   fix linting errors
+    *   update criteria for skipping middleware automatically
+    *   remove skip_bot option
     *   travis and changelog added
     *   readme updates
     *   updated examples
