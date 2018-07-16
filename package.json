@@ -4,8 +4,7 @@
   "description": "Middleware for using Dialogflow (formerly Api.ai) with Botkit-powered bots",
   "main": "src/botkit-middleware-dialogflow.js",
   "scripts": {
-    "test": "npm run lint && mocha test --exit",
-    "testv1": "npm run lint && mocha test/v1 --exit",
+    "test": "npm run lint && mocha 'test/**/test*' --exit",
     "lint": "eslint src/*.js",
     "prepublishOnly": "npm run test"
   },
@@ -43,6 +42,8 @@
     "eslint": "^4.19.1",
     "lodash": "^4.17.10",
     "mocha": "^5.2.0",
-    "nock": "^9.4.2"
+    "mockery": "^2.1.0",
+    "nock": "^9.4.2",
+    "sinon": "^6.1.3"
   }
 }

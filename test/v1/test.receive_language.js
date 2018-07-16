@@ -4,10 +4,7 @@ const expect = require('chai').expect;
 const _ = require('lodash');
 const clone = require('clone');
 
-describe('receive() text language support', function() {
-  // Dialogflow params
-  const config = require('./config.json');
-
+describe('v1/ receive() text language support', function() {
   // Botkit params
   const controller = Botkit.slackbot();
   const bot = controller.spawn({

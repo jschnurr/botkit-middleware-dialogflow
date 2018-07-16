@@ -1,8 +1,9 @@
 const Botkit = require('botkit');
 const nock = require('nock');
 const expect = require('chai').expect;
+const clone = require('clone');
 
-describe('receive() text', function() {
+describe('v1/ receive() text', function() {
   // Dialogflow params
   const config = require('./config.json');
 
@@ -19,24 +20,11 @@ describe('receive() text', function() {
   });
 
   // incoming message from chat platform, before middleware processing
-  const message = {
+  const defaultMessage = {
     type: 'direct_message',
     channel: 'D88V7BL2F',
     user: 'U891YCT42',
     text: 'hi',
-    ts: '1522500856.000117',
-    source_team: 'T8938ACLC',
-    team: 'T8938ACLC',
-    raw_message: {
-      type: 'message',
-      channel: 'D88V7BL2F',
-      user: 'U891YCT42',
-      text: 'hi',
-      ts: '1522500856.000117',
-      source_team: 'T8938ACLC',
-      team: 'T8938ACLC',
-    },
-    _pipeline: { stage: 'receive' },
   };
 
   // response from DialogFlow api call to /query endpoint
@@ -78,6 +66,7 @@ describe('receive() text', function() {
   });
 
   it('should make a call to the Dialogflow api', function(done) {
+    const message = clone(defaultMessage);
     middleware.receive(bot, message, function(err, response) {
       expect(nock.isDone()).is.true;
       done();
@@ -85,45 +74,52 @@ describe('receive() text', function() {
   });
 
   it('should add custom fields to the message object', function(done) {
+    const message = clone(defaultMessage);
     middleware.receive(bot, message, function(err, response) {
       expect(message)
         .to.be.an('object')
-        .that.includes.all.keys('nlpResponse', 'intent', 'entities', 'fulfillment', 'confidence');
+        .that.includes.all.keys(
+          'nlpResponse',
+          'intent',
+          'entities',
+          'fulfillment',
+          'confidence',
+          'action'
+        );
       done();
     });
   });
 
   it('should correctly include the Dialogflow API result on the nlpResponse key', function(done) {
+    const message = clone(defaultMessage);
     middleware.receive(bot, message, function(err, response) {
       expect(message.nlpResponse).to.deep.equal(expectedDfData);
       done();
     });
   });
 
-  it('should correctly copy result.metadata.intentName to the message.intent key', function(done) {
+  it('should correctly add fields to the message', function(done) {
+    const message = clone(defaultMessage);
     middleware.receive(bot, message, function(err, response) {
-      expect(message.intent).to.eql(expectedDfData.result.metadata.intentName);
-      done();
-    });
-  });
-
-  it('should correctly copy result.parameters to the message.entities key', function(done) {
-    middleware.receive(bot, message, function(err, response) {
-      expect(message.entities).to.eql(expectedDfData.result.parameters);
-      done();
-    });
-  });
-
-  it('should correctly copy result.fulfillment to the message.fulfillment key', function(done) {
-    middleware.receive(bot, message, function(err, response) {
-      expect(message.fulfillment).to.eql(expectedDfData.result.fulfillment);
-      done();
-    });
-  });
-
-  it('should correctly copy result.score to the message.confidence key', function(done) {
-    middleware.receive(bot, message, function(err, response) {
-      expect(message.confidence).to.eql(expectedDfData.result.score);
+      expect(message).to.deep.include({
+        type: 'direct_message',
+        channel: 'D88V7BL2F',
+        user: 'U891YCT42',
+        text: 'hi',
+        intent: 'hello-intent',
+        entities: {},
+        action: '',
+        fulfillment: {
+          speech: '',
+          messages: [
+            {
+              type: 0,
+              speech: '',
+            },
+          ],
+        },
+        confidence: 1,
+      });
       done();
     });
   });

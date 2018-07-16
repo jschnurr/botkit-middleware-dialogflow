@@ -1,5 +1,5 @@
 const expect = require('chai').expect;
-const util = require('../../src/util');
+const util = require('../src/util');
 
 describe('generateSessionId functions', function() {
   it('should return a hash when property is provided as a string', function(done) {

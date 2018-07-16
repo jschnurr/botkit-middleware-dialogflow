@@ -3,7 +3,7 @@ const nock = require('nock');
 const expect = require('chai').expect;
 const clone = require('clone');
 
-describe('hears()', function() {
+describe('v1/ hears()', function() {
   // Dialogflow params
   const config = require('./config.json');
 
@@ -20,7 +20,7 @@ describe('hears()', function() {
   });
 
   // incoming message from chat platform, before middleware processing
-  const message = {
+  const defaultMessage = {
     type: 'direct_message',
     channel: 'D88V7BL2F',
     user: 'U891YCT42',
@@ -79,75 +79,9 @@ describe('hears()', function() {
   });
 
   it('should hear intent returned in Dialogflow response', function(done) {
+    const message = clone(defaultMessage);
     middleware.receive(bot, message, function(err, response) {
       const heard = middleware.hears(['hello-intent'], message);
-      expect(heard).is.true;
-      done();
-    });
-  });
-
-  it('should not hear intent if confidence is not high enough', function(done) {
-    middleware.receive(bot, message, function(err, response) {
-      const msg = clone(message);
-      msg.confidence = 0.1; // under default threshold of 0.5
-
-      const heard = middleware.hears(['hello-intent'], msg);
-      expect(heard).is.false;
-      done();
-    });
-  });
-
-  it('should match intent as a string', function(done) {
-    middleware.receive(bot, message, function(err, response) {
-      const heard = middleware.hears('hello-intent', message);
-      expect(heard).is.true;
-      done();
-    });
-  });
-
-  it('should match intent as a string containing regex', function(done) {
-    middleware.receive(bot, message, function(err, response) {
-      const heard = middleware.hears('hello(.*)', message);
-      expect(heard).is.true;
-      done();
-    });
-  });
-
-  it('should match intent as a string of mixed case', function(done) {
-    middleware.receive(bot, message, function(err, response) {
-      const heard = middleware.hears('HELLO-intent', message);
-      expect(heard).is.true;
-      done();
-    });
-  });
-
-  it('should not match intent as a string if only a substring matches', function(done) {
-    middleware.receive(bot, message, function(err, response) {
-      const heard = middleware.hears('hello-in', message);
-      expect(heard).is.false;
-      done();
-    });
-  });
-
-  it('should match intent as a RegExp', function(done) {
-    middleware.receive(bot, message, function(err, response) {
-      const heard = middleware.hears(/^HEl.*/i, message);
-      expect(heard).is.true;
-      done();
-    });
-  });
-
-  it('should match intent as a string in an array', function(done) {
-    middleware.receive(bot, message, function(err, response) {
-      const heard = middleware.hears(['blah', 'hello-intent'], message);
-      expect(heard).is.true;
-      done();
-    });
-  });
-
-  it('should match intent as a RegExp in an array', function(done) {
-    middleware.receive(bot, message, function(err, response) {
-      const heard = middleware.hears(['blah', /^(hello)/], message);
       expect(heard).is.true;
       done();
     });

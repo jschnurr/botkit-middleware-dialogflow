@@ -1,17 +1,17 @@
 const debug = require('debug')('dialogflow-middleware');
-const makeArrayOfRegex = require('./util').makeArrayOfRegex;
-const generateSessionId = require('./util').generateSessionId;
+const util = require('./util');
 const api = require('./api');
+const path = require('path');
 
 module.exports = function(config) {
   config = checkOptions(config);
 
-  const ignoreTypePatterns = makeArrayOfRegex(config.ignoreType || []);
+  const ignoreTypePatterns = util.makeArrayOfRegex(config.ignoreType || []);
   const middleware = {};
 
-  const app = api(config);
+  const app = (middleware.api = api(config));
 
-  middleware.receive = function(bot, message, next) {
+  middleware.receive = async function(bot, message, next) {
     if (!message.text || message.is_echo || message.type === 'self_message') {
       next();
       return;
@@ -25,7 +25,7 @@ module.exports = function(config) {
       }
     }
 
-    const sessionId = generateSessionId(config, message);
+    const sessionId = util.generateSessionId(config, message);
     const lang = message.lang || config.lang;
 
     debug(
@@ -35,22 +35,20 @@ module.exports = function(config) {
       message.text
     );
 
-    const request = app.query(sessionId, lang, message.text);
-
-    request.on('response', function(response) {
+    try {
+      const response = await app.query(sessionId, lang, message.text);
       Object.assign(message, response);
+
       debug('dialogflow annotated message: %O', message);
       next();
-    });
-
-    request.on('error', function(error) {
+    } catch (error) {
       debug('dialogflow returned error', error);
       next(error);
-    });
+    }
   };
 
   middleware.hears = function(patterns, message) {
-    const regexPatterns = makeArrayOfRegex(patterns);
+    const regexPatterns = util.makeArrayOfRegex(patterns);
 
     for (const pattern of regexPatterns) {
       if (pattern.test(message.intent) && message.confidence >= config.minimumConfidence) {
@@ -62,13 +60,10 @@ module.exports = function(config) {
   };
 
   middleware.action = function(patterns, message) {
-    const regexPatterns = makeArrayOfRegex(patterns);
+    const regexPatterns = util.makeArrayOfRegex(patterns);
 
     for (const pattern of regexPatterns) {
-      if (
-        pattern.test(message.nlpResponse.result.action) &&
-        message.confidence >= config.minimumConfidence
-      ) {
+      if (pattern.test(message.action) && message.confidence >= config.minimumConfidence) {
         debug('dialogflow action matched hear pattern', message.intent, pattern);
         return true;
       }
@@ -87,17 +82,27 @@ module.exports = function(config) {
  */
 function checkOptions(config = {}) {
   const defaults = {
-    version: 'v1',
+    version: 'v2',
     minimumConfidence: 0.5,
     sessionIdProps: ['user', 'channel'],
     ignoreType: 'self_message',
     lang: 'en',
   };
-
   config = Object.assign({}, defaults, config);
 
-  if (config.version === 'v1' && !config.token) {
-    throw new Error('No dialogflow token provided.');
+  config.version = config.version.toUpperCase();
+
+  if (config.keyFilename) {
+    if (!path.isAbsolute(config.keyFilename)) {
+      config.keyFilename = path.join(process.cwd(), config.keyFilename);
+    }
+  }
+  if (config.version === 'V1' && !config.token) {
+    throw new Error('Dialogflow token must be provided for v1.');
+  }
+
+  if (config.version === 'V2' && !config.keyFilename) {
+    throw new Error('Dialogflow keyFilename must be provided for v2.');
   }
 
   debug(`settings are ${JSON.stringify(config)}`);
