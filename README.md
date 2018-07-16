@@ -43,9 +43,10 @@ npm install botkit-middleware-dialogflow
 Dialogflow has two versions of their API. V2 is the standard, and should be the default for new agents.
 
 However, if you need to [migrate](https://dialogflow.com/docs/reference/v1-v2-migration-guide) from Dialogflow API V1, or are upgrading from earlier versions of `botkit-middleware-dialogflow`, consider the following factors:
--  some `message` properties have changed.
+-  some Botkit `message` properties have changed.
     -  `fulfillment.speech` -> `fulfillment.text`
     -   `action` property is new
+    -   `nlpResponse` object structure has changed significantly.
 -  V2 users must provide a JSON keyfile instead of an API key for DialogFlow authentication
 -  options parameter `minimum_confidence` has been renamed `minimumConfidence` to match the predominant style.
 
@@ -289,6 +290,8 @@ Feedback, suggestions and PRs are welcome.
 
 Forked from [botkit-middleware-apiai](https://github.com/abeai/botkit-middleware-apiai). Thanks to
 [@abeai](https://github.com/abeai) for the original work.
+
+Also thanks to @ehrhart for patches supporting V2.
 
 # License
 
