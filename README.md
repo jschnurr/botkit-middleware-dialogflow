@@ -291,7 +291,7 @@ Feedback, suggestions and PRs are welcome.
 Forked from [botkit-middleware-apiai](https://github.com/abeai/botkit-middleware-apiai). Thanks to
 [@abeai](https://github.com/abeai) for the original work.
 
-Also thanks to @ehrhart for patches supporting V2.
+Also thanks to [@ehrhart](https://github.com/ehrhart) for patches supporting V2.
 
 # License
 
