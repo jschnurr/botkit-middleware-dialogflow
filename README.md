@@ -1,181 +1,183 @@
 <!-- markdownlint-disable first-line-h1 -->
 <!-- markdownlint-disable no-inline-html -->
-<!-- markdownlint-disable ul-indent -->
 
 [![Build Status](https://travis-ci.org/jschnurr/botkit-middleware-dialogflow.svg?branch=master)](https://travis-ci.org/jschnurr/botkit-middleware-dialogflow)
 
 # Botkit Middleware Dialogflow
 
-- [Botkit Middleware Dialogflow](#botkit-middleware-dialogflow)
-    - [Installation](#installation)
-    - [Function Overview](#function-overview)
-        - [Receive Middleware](#receive-middleware)
-        - [Hear Middleware](#hear-middleware)
-    - [Usage](#usage)
-        - [Create a Dialogflow Agent](#create-a-dialogflow-agent)
-        - [Configure a Channel](#configure-a-channel)
-        - [Bot Setup](#bot-setup)
-    - [What it does](#what-it-does)
-- [Features](#features)
-    - [Options](#options)
-    - [Entities](#entities)
-    - [Language](#language)
-    - [Debugging](#debugging)
-- [Change Log](#change-log)
-- [Credit](#credit)
-- [License](#license)
-
-This middleware plugin for [Botkit](http://howdy.ai/botkit) allows developers to integrate [Google Dialogflow](https://dialogflow.com/) (formerly [api.ai](https://api.ai)) with social platforms like Slack, Facebook and Twilio.
+A middleware plugin for [Botkit](http://howdy.ai/botkit) that allows developers to integrate with [Google Dialogflow](https://dialogflow.com/), leveraging the power of both to build chatbot applications on Node for social platforms like Slack, Facebook and Twilio.
 
 Dialogflow's Natural Language Processing (NLP) platform transforms real-world user input into structured
-**intents** and **entities**, and can optionally trigger **actions** and **fulfillment (webhooks)**. Configuration
+**intents** and **entities**, and can optionally trigger **actions** and **fulfillment** (webhooks). Configuration
 and training are done in the convenient and powerful [Dialogflow Console](https://console.dialogflow.com/), with
 the results being immediately available to your bot.
+
+- [Botkit Middleware Dialogflow](#botkit-middleware-dialogflow)
+    - [Installation](#installation)
+    - [Migrating from earlier versions](#migrating-from-earlier-versions)
+    - [Quick Start](#quick-start)
+        - [1. Setup an Agent in Dialogflow](#1-setup-an-agent-in-dialogflow)
+        - [2. Create a service account](#2-create-a-service-account)
+        - [3. Add the middleware to your Bot](#3-add-the-middleware-to-your-bot)
+        - [4. Try it out!](#4-try-it-out)
+    - [Middleware functions](#middleware-functions)
+        - [receive()](#receive)
+        - [hears()](#hears)
+        - [action()](#action)
+    - [Options](#options)
+    - [Language Support](#language-support)
+    - [Debugging](#debugging)
+    - [Legacy V1 API](#legacy-v1-api)
+- [Change Log](#change-log)
+- [Contributing](#contributing)
+- [Credit](#credit)
+- [License](#license)
 
 ## Installation
 
 ```bash
-npm install botkit-middleware-dialogflow --save
+npm install botkit-middleware-dialogflow
 ```
 
-## Function Overview
+## Migrating from earlier versions
+Dialogflow has two versions of their API. V2 is the standard, and should be the default for new agents.
 
-### [Receive Middleware](https://github.com/howdyai/botkit/blob/master/docs/middleware.md#receive-middleware)
+However, if you need to [migrate](https://dialogflow.com/docs/reference/v1-v2-migration-guide) from Dialogflow API V1, or are upgrading from earlier versions of `botkit-middleware-dialogflow`, consider the following factors:
+-  some `message` properties have changed.
+    -  `fulfillment.speech` -> `fulfillment.text`
+    -   `action` property is new
+-  V2 users must provide a JSON keyfile instead of an API key for DialogFlow authentication
+-  options parameter `minimum_confidence` has been renamed `minimumConfidence` to match the predominant style.
 
-*   `middleware.receive`: used to send the message content to Dialogflow, and add results to the message object.
+`botkit-middleware-dialogflow` continues to support both versions of the API. Instructions for legacy V1 are [below]((#legacy-v1-api)).
 
-### [Hear Middleware](https://github.com/howdyai/botkit/blob/master/docs/middleware.md#hear-middleware)
+## Quick Start
 
-*   `middleware.hears`: matches intent names as configured in [Dialogflow Console](https://console.dialogflow.com/)
-*   `middleware.action`: matches action names configured in [Dialogflow Console](https://console.dialogflow.com/)
+### 1. Setup an Agent in Dialogflow
+<img src="images/default_intent.png" />
 
-## Usage
+Google describes `Agents` as *NLU (Natural Language Understanding) modules*. They transform natural user requests into structured, actionable data. 
 
-### Create a Dialogflow Agent
+1. In the [Dialogflow Console](https://console.dialogflow.com/), create an [agent](https://dialogflow.com/docs/agents)
+2. Choose or create a [Google Cloud Platform (GCP) Project](https://cloud.google.com/docs/overview/#projects).
+3. Dialogflow will automatically setup a `Default Welcome Intent`, which you can try from the test console.
 
-To get started, [sign up for an account](https://console.dialogflow.com/api-client/#/login), and explore the
-[Dialogflow Console](https://console.dialogflow.com/).
+### 2. Create a service account
+<img src="images/save_json.png" />
 
-Next, create an [agent](https://dialogflow.com/docs/agents). Agents represent your bots' NLU (Natural Language
-Understanding). Your bot will interact with your agent through the [Dialogflow API](https://dialogflow.com/docs/reference/agent/).
+In order for your Bot to access your Dialogflow Agent, you will need to create a `service account`. A [Service account](https://cloud.google.com/compute/docs/access/service-accounts) is an identity that allows your bot to access the Dialogflow services on your behalf. Once configured, you can download the private key for your service account as a JSON file.
 
-The API keys can be found in the [agent settings](https://dialogflow.com/docs/agents#settings). Note the
-_Client access token_; this will be required by your bot.
+1. Open the [GCP Cloud Console](https://console.cloud.google.com), and select the project which contains your agent.
+2. From the `nav` menu, choose `IAM & admin`, `Service accounts`. 
+3. Select `Dialogflow Integrations` (created by default by Dialogflow), or create your own.
+4. Under `actions`, select `create key`, select `JSON` and download the file.
 
-<p align="center">
-  <img src="images/tokens.png" />
-</p>
-<br>
+### 3. Add the middleware to your Bot
+Using Slack (as an example), wire up your Bot to listen for the `Default Welcome Intent`, and then pass along the reply that Dialogflow recommends in `fulfillment.text`.
 
-### Configure a Channel
+``` javascript
+const Botkit = require('botkit');
+const dialogflowMiddleware = require('botkit-middleware-dialogflow')({
+  keyFilename: './mybot-service-key.json',  // service account private key file from Google Cloud Console
+});
 
-This document shows code snippets using [Slack](https://github.com/howdyai/botkit/blob/master/docs/readme-slack.md) with the middleware. See the `examples` folder for how to configure a basic bot on your preferred service.
+const slackController = Botkit.slackbot();
+const slackBot = slackController.spawn({
+  token: 'xoxb-082028214871-xEEQbIkyAHH3poFMpUG3dkGW',  // Slack API Token
+});
 
-### Bot Setup
+slackController.middleware.receive.use(dialogflowMiddleware.receive);
+slackBot.startRTM();
 
-Let's walk through the code in the `examples/slack_bot.js` file.
-
-Let's start with Botkit. That's the main engine.
-
-```javascript
-var Botkit = require('botkit');
-```
-
-Create a Slack controller using Botkit:
-
-```javascript
-var slackController = Botkit.slackbot({
-    debug: true,
+slackController.hears(['Default Welcome Intent'], 'direct_message', dialogflowMiddleware.hears, function(
+  bot,
+  message
+) {
+  replyText = message.fulfillment.text;  // message object has new fields added by Dialogflow
+  bot.reply(message, replyText);
 });
 ```
 
-Spawn a Slack bot using the controller:
+### 4. Try it out!
+<img src="images/bot_welcome.png" />
+
+## Middleware functions
+`Botkit` supports middleware integration into core bot processes in a few useful places, described [here](https://botkit.ai/docs/middleware.html).
+
+### receive()
+Each time the chat platform (eg. Slack, Facebook etc) emits a message to Botkit, `botkit-middleware-dialogflow` uses `receive` middleware to process that message and optionally modify it, before passing it back to Botkit and on down the chain.
+
+#### Setup
+First, create an instance of the middleware:
 
 ```javascript
-var slackBot = slackController.spawn({
-    token: process.env.token,
-});
+const dialogflowMiddleware = require('botkit-middleware-dialogflow')(options);
 ```
 
-Create a middleware object which we'll be attaching to the controller:
+Typically `keyFilename` is the only property of `options` that needs to be set. See [options](#options) section for full list.
 
-```javascript
-var options = {
-    token: process.env.dialogflow,
-};
-var dialogflowMiddleware = require('botkit-middleware-dialogflow')(options);
-```
-
-Tell your Slackbot to use the middleware when it receives a message:
+Next, tell the `controller` that you want to use the middleware:
 
 ```javascript
 slackController.middleware.receive.use(dialogflowMiddleware.receive);
-slackBot.startRTM();
 ```
 
-Finally, make your bot listen for the intent you configured in the Dialogflow Agent. Notice we
-are listening for `hello-intent` - that's the name we gave the intent in the [Dialogflow Console](https://console.dialogflow.com/).
+#### ignoreType
+Not every message should be sent to DialogFlow, such as `user_typing` indicators. To avoid these uneccessary calls, `botkit-middleware-dialogflow` allows you to specify which message types to ignore, using the `ignoreType` option.
 
-Patterns can be provided as an array or a comma separated string containing a list of regular expressions to match.
+Since the middleware is part of the [message pipeline](https://botkit.ai/docs/readme-pipeline.html), Botkit has already ingested, normalized and categorized the message by the time we apply this filter. Keep this in mind when choosing which types to ignore.
 
-```javascript
-// listen for literal string 'hello-intent' (case insensitive)
-slackController.hears('hello-intent', 'direct_message', dialogflowMiddleware.hears, function(
-    bot,
-    message
-) {
-    bot.reply(message, 'Hello!');
-});
-```
+#### API Call
+Assuming the message has passed the `ignoreType` filter, it's sent off to the Dialogflow API for processing. The response is parsed and applied to the `message` object itself.
 
-or
+Specifically, here are the new `message` properties available after processing:
 
-```javascript
-// listen for literal string 'hello-intent', or anything beginning with "HELLO" (case insensitive)
-slackController.hears(
-    ['hello-intent', /^HELLO.*/i],
-    'direct_message',
-    dialogflowMiddleware.hears,
-    function(bot, message) {
-        bot.reply(message, 'Hello!');
-    }
-);
-```
-
-or
-
-```javascript
-// listen for comma-separated 'hello-intent' or 'greeting-intent'
-slackController.hears(
-    'hello-intent,greeting-intent',
-    'direct_message',
-    dialogflowMiddleware.hears,
-    function(bot, message) {
-        bot.reply(message, 'Hello!');
-    }
-);
-```
-
-## What it does
-
-The middleware parses the Dialogflow API response and updates the message object. The raw result of the middleware call to [https://api.dialogflow.com/v1/query](https://dialogflow.com/docs/reference/agent/query) endpoint is made available on the `nlpResponse` property of the message.
-
-The full set of properties available after processing include:
-
-*   `message.intent` for any named intents found as defined in Dialogflow
-*   `message.entities` for any language entities defined in Dialogflow (dates, places, etc)
-*   `message.fulfillment` for Dialogflow specific speech fulfillment
-*   `message.confidence` for the confidence interval
-*   `message.nlpResponse` for the raw Dialogflow response.
+*   `message.intent` [intents](https://dialogflow.com/docs/intents) recognized by Dialogflow (eg. saying 'hi' might trigger the `hello-intent`)
+*   `message.entities` [entities](https://dialogflow.com/docs/entities) found as defined in Dialogflow (eg. dates, places, etc)
+*   `message.action` [actions and parameters](https://dialogflow.com/docs/actions-and-parameters) triggered by the intent
+*   `message.fulfillment` [fulfillment](https://dialogflow.com/docs/fulfillment) triggered by the intent, such as webhooks or text responses.
+*   `message.confidence` intent detection confidence. Values range from 0.0 (completely uncertain) to 1.0 (completely certain).
+*   `message.nlpResponse` the raw Dialogflow API response.
 
 Here is a diff of a message object, before and after middleware processing.
 
-<p align="center">
-  <img src="images/diff.png" />
-</p>
-<br>
+<img src="images/message_diff.png" />
 
-# Features
+
+### hears()
+To make your bot listen for the intent name configured in Dialogflow, we need to change the way Botkit "hears" triggers, by passing our middleware into the `hears()` event handler.
+
+For example, using our `dialogflowMiddleware` object defined above:
+
+``` javascript
+controller.hears('hello-intent', 'direct_message', dialogflowMiddleware.hears, function(bot, message) {
+    // do something
+});
+```
+
+Notice we are listening for `hello-intent` - that's the name we gave the intent in the [Dialogflow Console](https://console.dialogflow.com/).
+
+Patterns used to match the intent name can be provided as comma seperated strings, regex, or an array of strings and regex.
+
+- `'hello-intent'` // matches hello-intent, HELLO-INTENT case insensitive
+- `['hello-intent', /^HELLO.*/i]` // matches hello-intent, hello, or HELLotherejimmy
+- `'hello-intent,greeting-intent'` // matches hello-intent or greeting-intent'
+
+Patterns are compared with the `message.intent` property after the `receives()` function has processed it.
+
+### action()
+When an intent is triggered, a Dialogflow agent can be configured to take an [action](https://dialogflow.com/docs/actions-and-parameters). The name of the action is captured in the `message.action` property, after procesing by the middleware.
+
+You can setup a `hears()` event handler to trigger on `message.action` as well.
+
+``` javascript
+controller.hears('hello-intent', 'direct_message', dialogflowMiddleware.action, function(bot, message) {
+    // do something
+});
+```
+
+The patterns format is the same as `hears()`.
+
 
 ## Options
 
@@ -185,19 +187,14 @@ When creating the middleware object, pass an options object with the following p
 | ----------------- | :------------ | :-----------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | ignoreType        | No            | 'self_message'      | Skip Dialogflow processing if the `type` matches the pattern. Useful to avoid unneccessary API calls. Patterns can be provided as a string, regex, or array of either.                                                                                                                                                                                                                        |
 | minimumConfidence | No            | 0.5                 | Dialogflow returns a confidence (in the range 0.0 to 1.0) for each matching intent. This value is the cutoff - the `hears` and `action` middleware will only return a match for confidence values equal or greather than this value.                                                                                                                                                          |
-| sessionIdProps    | No            | ['user', 'channel'] | Session ID's help Dialogflow preserve context across multiple calls. By default, this session ID is an MD5 hash of the `user` and `channel` properties on the `message` object. If you'd like to use different properties, provide them as a string or array or strings. If none of the desired properties are available on a `message`, the middleware will use a random session ID instead. |
+| sessionIdProps    | No            | ['user', 'channel'] | Session ID's help Dialogflow preserve context across multiple calls. By default, this session ID is an MD5 hash of the `user` and `channel` properties on the `message` object. If you'd like to use different properties, provide them as a string or array of strings. If none of the desired properties are available on a `message`, the middleware will use a random session ID instead. |
 | lang              | No            | 'en'                | if the `message` object does not have a `lang` property, this language will be used as the default.                                                                                                                                                                                                                                                                                           |
 | version           | No            | v2                  | Version of the dialogflow API to use. Your agent needs to use the same setting for your [agent](https://dialogflow.com/docs/agents) in the DialogFlow console.                                                                                                                                                                                                                                |
-| token             | Yes (v1 only) | N/A                 | Client access token, from the Dialogflow Console. Only required with version v1.                                                                                                                                                                                                                                                                                                              |
+| token             | Yes (v1 only) |                     | Client access token, from the Dialogflow Console. Only required with version v1.                                                                                                                                                                                                                                                                                                              |
 | keyFilename       | Yes (v2 only) |                     | Path to the a .json key downloaded from the Google Developers Console. Can be relative to where the process is being run from.                                                                                                                                                                                                                                                                |
 > v2 users can optionally provide a path to a .pem or .p12 `keyFilename`, in which case you must specify an `email` and `projectId` parameter as well.
 
-## Entities
-
-Dialogflow has the ability to extract entities (dates, places, etc) from user input. If you have configured your Agent this way,
-any entities found will be available on the message.entities property.
-
-## Language
+## Language Support
 
 Dialogflow supports [multi-language agents](https://dialogflow.com/docs/multi-language). If the `message` object has a `lang` value set,
 the middleware will send it to Dialogflow and the response will be in that language, if the agent supports it.
@@ -223,6 +220,17 @@ By default, objects are only logged to a depth of 2. To recurse indefinitely, se
 ```bash
 DEBUG=dialogflow-middleware DEBUG_DEPTH=null node your_awesome_bot.js
 ```
+
+## Legacy V1 API
+To use the legacy V1 version of the Dialogflow API:
+
+- In the Dialogflow console:
+    - In the agent settings, select `V1 API`.
+    - Note the `Client access token`.
+- Set options for the middleware:
+    - `token` is the `Client access token` from the Dialogflow console.
+    - `version` should be set to `v1`, telling `botkit-middleware-dialogflow` to use the legacy API.
+
 
 # Change Log
 
@@ -266,6 +274,11 @@ DEBUG=dialogflow-middleware DEBUG_DEPTH=null node your_awesome_bot.js
 
 *   pre-fork as botkit-middleware-apiai
     *   initial release
+
+# Contributing
+If you would like to help make `botkit-middleware-dialogflow` better, please open an issue in Github, or send me a pull request.
+
+Feedback, suggestions and PRs are welcome.
 
 # Credit
 

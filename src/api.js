@@ -132,7 +132,7 @@ class DialogFlowAPI_V2 {
       entities: structProtoToJson(response.queryResult.parameters),
       action: _.get(response, 'queryResult.action', null),
       fulfillment: {
-        speech: _.get(response, 'queryResult.fulfillmentText', null),
+        text: _.get(response, 'queryResult.fulfillmentText', null),
         messages: _.get(response, 'queryResult.fulfillmentMessages', null),
       },
       confidence: _.get(response, 'queryResult.intentDetectionConfidence', null),

@@ -79,7 +79,7 @@ describe('middleware.receive() normalization into the message object', function(
         },
         action: 'pickFruit',
         fulfillment: {
-          speech: 'Okay how many apples?',
+          text: 'Okay how many apples?',
           messages: [
             {
               platform: 'PLATFORM_UNSPECIFIED',

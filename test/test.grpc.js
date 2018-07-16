@@ -99,7 +99,7 @@ describe('grpc layer', function() {
         entities: {},
         action: 'hello-intent',
         fulfillment: {
-          speech: 'Good day!',
+          text: 'Good day!',
           messages: [
             {
               platform: 'PLATFORM_UNSPECIFIED',
