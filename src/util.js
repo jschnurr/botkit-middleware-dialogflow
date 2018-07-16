@@ -1,5 +1,5 @@
 const hasha = require('hasha');
-const uuid = require('node-uuid');
+const uuidv1 = require('uuid/v1');
 const debug = require('debug')('dialogflow-middleware');
 
 /*
@@ -60,6 +60,6 @@ exports.generateSessionId = function(config, message) {
   if (hashElements.length > 0) {
     return hasha(hashElements.join(''), { algorithm: 'md5' });
   } else {
-    return uuid.v1();
+    return uuidv1();
   }
 };

@@ -1,6 +1,6 @@
 {
   "name": "botkit-middleware-dialogflow",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Middleware for using Dialogflow (formerly Api.ai) with Botkit-powered bots",
   "main": "src/botkit-middleware-dialogflow.js",
   "scripts": {
@@ -33,14 +33,14 @@
     "debug": "^3.1.0",
     "dialogflow": "^0.5.0",
     "hasha": "^3.0.0",
-    "node-uuid": "^1.4.8"
+    "lodash": "^4.17.10",
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
     "botkit": "^0.6.15",
     "chai": "^4.1.2",
     "clone": "^1.0.4",
     "eslint": "^4.19.1",
-    "lodash": "^4.17.10",
     "mocha": "^5.2.0",
     "mockery": "^2.1.0",
     "nock": "^9.4.2",
