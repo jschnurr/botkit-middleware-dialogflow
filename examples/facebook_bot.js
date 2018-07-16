@@ -20,12 +20,16 @@ This bot demonstrates many of the core features of Botkit:
 
     -> https://developers.facebook.com/docs/messenger-platform/implementation
 
+  Get a JSON file with your service account key from the Google Cloud Console
+
+    -> https://console.cloud.google.com
+
   Run your bot from the command line:
 
     app_secret=<MY APP SECRET> \
     page_token=<MY PAGE TOKEN> \
     verify_token=<MY_VERIFY_TOKEN> \
-    dialogflow=<CLIENT_ACCESS_TOKEN> \
+    dialogflow=<path_to_JSON_file> \
     node facebook_bot.js [--lt [--ltsubdomain LOCALTUNNEL_SUBDOMAIN]]
 
   Use the --lt option to make your bot available on the web through localtunnel.me.
@@ -112,7 +116,7 @@ const controller = Botkit.facebookbot({
 });
 
 const dialogflow = require('../')({
-  token: process.env.dialogflow,
+  keyFilename: process.env.dialogflow,
 });
 
 controller.middleware.receive.use(dialogflow.receive);
