@@ -236,7 +236,7 @@ To use the legacy V1 version of the Dialogflow API:
 
 # Change Log
 
-*   16-July-2018 v2.0.0
+*   16-July-2018 v2.0.1
     *   refactor to support Dialogflow API V2
     *   readme updates
     *   defaults and examples now use Dialogflow API V2
