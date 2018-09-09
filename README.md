@@ -235,7 +235,7 @@ To use the legacy V1 version of the Dialogflow API:
 
 ## Change Log
 
-*   8-Sept-2018 v2.0.3
+*   8-Sept-2018 v2.0.4
     *   Fix projectId not detected when passed in config
 
 *   16-July-2018 v2.0.2
