@@ -89,6 +89,7 @@ describe('grpc layer', function() {
   middleware.api.app._innerApiCalls.detectIntent = mockSimpleGrpcMethod(request, apiResponse);
 
   it('should make a call to Dialogflow and return an annotated message', function(done) {
+    // eslint-disable-next-line
     middleware.receive(bot, message, function(err, response) {
       expect(message).to.deep.equal({
         type: 'direct_message',
