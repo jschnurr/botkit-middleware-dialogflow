@@ -3,7 +3,7 @@
 
 [![Build Status](https://travis-ci.org/jschnurr/botkit-middleware-dialogflow.svg?branch=master)](https://travis-ci.org/jschnurr/botkit-middleware-dialogflow)
 
-# Botkit Middleware Dialogflow
+# Botkit Middleware Dialogflow <!-- omit in toc -->
 
 A middleware plugin for [Botkit](http://howdy.ai/botkit) that allows developers to integrate with [Google Dialogflow](https://dialogflow.com/), leveraging the power of both to build chatbot applications on Node for social platforms like Slack, Facebook and Twilio.
 
@@ -12,22 +12,21 @@ Dialogflow's Natural Language Processing (NLP) platform transforms real-world us
 and training are done in the convenient and powerful [Dialogflow Console](https://console.dialogflow.com/), with
 the results being immediately available to your bot.
 
-- [Botkit Middleware Dialogflow](#botkit-middleware-dialogflow)
-    - [Installation](#installation)
-    - [Migrating from earlier versions](#migrating-from-earlier-versions)
-    - [Quick Start](#quick-start)
-        - [1. Setup an Agent in Dialogflow](#1-setup-an-agent-in-dialogflow)
-        - [2. Create a service account](#2-create-a-service-account)
-        - [3. Add the middleware to your Bot](#3-add-the-middleware-to-your-bot)
-        - [4. Try it out!](#4-try-it-out)
-    - [Middleware functions](#middleware-functions)
-        - [receive()](#receive)
-        - [hears()](#hears)
-        - [action()](#action)
-    - [Options](#options)
-    - [Language Support](#language-support)
-    - [Debugging](#debugging)
-    - [Legacy V1 API](#legacy-v1-api)
+- [Installation](#installation)
+- [Migrating from earlier versions](#migrating-from-earlier-versions)
+- [Quick Start](#quick-start)
+    - [1. Setup an Agent in Dialogflow](#1-setup-an-agent-in-dialogflow)
+    - [2. Create a service account](#2-create-a-service-account)
+    - [3. Add the middleware to your Bot](#3-add-the-middleware-to-your-bot)
+    - [4. Try it out!](#4-try-it-out)
+- [Middleware functions](#middleware-functions)
+    - [receive()](#receive)
+    - [hears()](#hears)
+    - [action()](#action)
+- [Options](#options)
+- [Language Support](#language-support)
+- [Debugging](#debugging)
+- [Legacy V1 API](#legacy-v1-api)
 - [Change Log](#change-log)
 - [Contributing](#contributing)
 - [Credit](#credit)
@@ -184,16 +183,16 @@ The patterns format is the same as `hears()`.
 
 When creating the middleware object, pass an options object with the following parameters.
 
-| Property          | Required      | Default                       | Description                                                                                                                                                                                                                                                                                                                                                                                   |
-| ----------------- | :------------ | :---------------------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| ignoreType        | No            | 'self_message'                | Skip Dialogflow processing if the `type` matches the pattern. Useful to avoid unneccessary API calls. Patterns can be provided as a string, regex, or array of either.                                                                                                                                                                                                                        |
-| minimumConfidence | No            | 0.5                           | Dialogflow returns a confidence (in the range 0.0 to 1.0) for each matching intent. This value is the cutoff - the `hears` and `action` middleware will only return a match for confidence values equal or greather than this value.                                                                                                                                                          |
-| sessionIdProps    | No            | ['user', 'channel']           | Session ID's help Dialogflow preserve context across multiple calls. By default, this session ID is an MD5 hash of the `user` and `channel` properties on the `message` object. If you'd like to use different properties, provide them as a string or array of strings. If none of the desired properties are available on a `message`, the middleware will use a random session ID instead. |
-| lang              | No            | 'en'                          | if the `message` object does not have a `lang` property, this language will be used as the default.                                                                                                                                                                                                                                                                                           |
-| version           | No            | v2                            | Version of the dialogflow API to use. Your agent needs to use the same setting for your [agent](https://dialogflow.com/docs/agents) in the DialogFlow console.                                                                                                                                                                                                                                |
-| token             | Yes (v1 only) |                               | Client access token, from the Dialogflow Console. Only required with version v1.                                                                                                                                                                                                                                                                                                              |
-| keyFilename       | Yes (v2 only) |                               | Path to the a .json key downloaded from the Google Developers Console. Can be relative to where the process is being run from.                                                                                                                                                                                                                                                                |
-| projectId         | No  | value of `project_id` in `keyFilename` | The Google project ID your Dialogflow V2 agent belongs to. You can find it in the agent settings. In most cases, your JSON key file will contain it, and the middleware will find it automatically.                                                                                                                                                                                              |
+| Property          | Required      | Default                                | Description                                                                                                                                                                                                                                                                                                                                                                                   |
+| ----------------- | :------------ | :------------------------------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ignoreType        | No            | 'self_message'                         | Skip Dialogflow processing if the `type` matches the pattern. Useful to avoid unneccessary API calls. Patterns can be provided as a string, regex, or array of either.                                                                                                                                                                                                                        |
+| minimumConfidence | No            | 0.5                                    | Dialogflow returns a confidence (in the range 0.0 to 1.0) for each matching intent. This value is the cutoff - the `hears` and `action` middleware will only return a match for confidence values equal or greather than this value.                                                                                                                                                          |
+| sessionIdProps    | No            | ['user', 'channel']                    | Session ID's help Dialogflow preserve context across multiple calls. By default, this session ID is an MD5 hash of the `user` and `channel` properties on the `message` object. If you'd like to use different properties, provide them as a string or array of strings. If none of the desired properties are available on a `message`, the middleware will use a random session ID instead. |
+| lang              | No            | 'en'                                   | if the `message` object does not have a `lang` property, this language will be used as the default.                                                                                                                                                                                                                                                                                           |
+| version           | No            | v2                                     | Version of the dialogflow API to use. Your agent needs to use the same setting for your [agent](https://dialogflow.com/docs/agents) in the DialogFlow console.                                                                                                                                                                                                                                |
+| token             | Yes (v1 only) |                                        | Client access token, from the Dialogflow Console. Only required with version v1.                                                                                                                                                                                                                                                                                                              |
+| keyFilename       | Yes (v2 only) |                                        | Path to the a .json key downloaded from the Google Developers Console. Can be relative to where the process is being run from.                                                                                                                                                                                                                                                                |
+| projectId         | No            | value of `project_id` in `keyFilename` | The Google project ID your Dialogflow V2 agent belongs to. You can find it in the agent settings. In most cases, your JSON key file will contain it, and the middleware will find it automatically.                                                                                                                                                                                           |
 > v2 users can optionally provide a path to a .pem or .p12 `keyFilename`, in which case you must specify an `email` and `projectId` parameter as well.
 
 ## Language Support
@@ -234,7 +233,10 @@ To use the legacy V1 version of the Dialogflow API:
     - `version` should be set to `v1`, telling `botkit-middleware-dialogflow` to use the legacy API.
 
 
-# Change Log
+## Change Log
+
+*   8-Sept-2018 v2.0.3
+    *   Fix projectId not detected when passed in config
 
 *   16-July-2018 v2.0.2
     *   refactor to support Dialogflow API V2
@@ -281,18 +283,18 @@ To use the legacy V1 version of the Dialogflow API:
 *   pre-fork as botkit-middleware-apiai
     *   initial release
 
-# Contributing
+## Contributing
 If you would like to help make `botkit-middleware-dialogflow` better, please open an issue in Github, or send me a pull request.
 
 Feedback, suggestions and PRs are welcome.
 
-# Credit
+## Credit
 
 Forked from [botkit-middleware-apiai](https://github.com/abeai/botkit-middleware-apiai). Thanks to
 [@abeai](https://github.com/abeai) for the original work.
 
 Also thanks to [@ehrhart](https://github.com/ehrhart) for patches supporting V2.
 
-# License
+## License
 
 This library is licensed under the MIT license. Full text is available in LICENSE.
