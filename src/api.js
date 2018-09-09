@@ -72,11 +72,12 @@ class DialogFlowAPI_V2 {
     } else {
       try {
         const keyFile = require(config.keyFilename);
-        this.projectId = keyFile.project_id;
+        opts.projectId = keyFile.project_id;
       } catch (err) {
         throw new Error('projectId must be provided or available in the keyFile.');
       }
     }
+    this.projectId = opts.projectId;
     if (config.credentials) {
       opts.credentials = config.credentials;
     }
