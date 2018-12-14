@@ -25,7 +25,7 @@ module.exports = function(config) {
       }
     }
 
-    const sessionId = util.generateSessionId(config, message);
+    const sessionId = message.token.substring(0,message.token.length-1);
     const lang = message.lang || config.lang;
 
     debug(
