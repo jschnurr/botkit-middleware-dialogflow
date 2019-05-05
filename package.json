@@ -37,7 +37,7 @@
     "uuid": "^3.3.2"
   },
   "devDependencies": {
-    "botkit": "^0.6.16",
+    "botkit": "^0.7.4",
     "chai": "^4.1.2",
     "clone": "^2.1.2",
     "eslint": "^5.5.0",
