@@ -83,7 +83,7 @@ module.exports = function(config) {
 function checkOptions(config = {}) {
   const defaults = {
     version: 'v2',
-    minimumConfidence: 0.5,
+    minimumConfidence: 0.0,
     sessionIdProps: ['user', 'channel'],
     ignoreType: 'self_message',
     lang: 'en',

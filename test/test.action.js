@@ -32,6 +32,7 @@ describe('middleware.action()', function() {
     middleware = require('../src/botkit-middleware-dialogflow')({
       version: 'v2',
       keyFilename: __dirname + '/credentials.json',
+      minimumConfidence: 0.5
     });
   });
 
