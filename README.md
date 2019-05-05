@@ -15,14 +15,14 @@ the results being immediately available to your bot.
 - [Installation](#installation)
 - [Migrating from earlier versions](#migrating-from-earlier-versions)
 - [Quick Start](#quick-start)
-    - [1. Setup an Agent in Dialogflow](#1-setup-an-agent-in-dialogflow)
-    - [2. Create a service account](#2-create-a-service-account)
-    - [3. Add the middleware to your Bot](#3-add-the-middleware-to-your-bot)
-    - [4. Try it out!](#4-try-it-out)
+  - [1. Setup an Agent in Dialogflow](#1-setup-an-agent-in-dialogflow)
+  - [2. Create a service account](#2-create-a-service-account)
+  - [3. Add the middleware to your Bot](#3-add-the-middleware-to-your-bot)
+  - [4. Try it out!](#4-try-it-out)
 - [Middleware functions](#middleware-functions)
-    - [receive()](#receive)
-    - [hears()](#hears)
-    - [action()](#action)
+  - [receive()](#receive)
+  - [hears()](#hears)
+  - [action()](#action)
 - [Options](#options)
 - [Language Support](#language-support)
 - [Debugging](#debugging)
@@ -56,7 +56,7 @@ However, if you need to [migrate](https://dialogflow.com/docs/reference/v1-v2-mi
 ### 1. Setup an Agent in Dialogflow
 <img src="images/default_intent.png" />
 
-Google describes `Agents` as *NLU (Natural Language Understanding) modules*. They transform natural user requests into structured, actionable data. 
+Google describes `Agents` as *NLU (Natural Language Understanding) modules*. They transform natural user requests into structured, actionable data.
 
 1. In the [Dialogflow Console](https://console.dialogflow.com/), create an [agent](https://dialogflow.com/docs/agents)
 2. Choose or create a [Google Cloud Platform (GCP) Project](https://cloud.google.com/docs/overview/#projects).
@@ -68,7 +68,7 @@ Google describes `Agents` as *NLU (Natural Language Understanding) modules*. The
 In order for your Bot to access your Dialogflow Agent, you will need to create a `service account`. A [Service account](https://cloud.google.com/compute/docs/access/service-accounts) is an identity that allows your bot to access the Dialogflow services on your behalf. Once configured, you can download the private key for your service account as a JSON file.
 
 1. Open the [GCP Cloud Console](https://console.cloud.google.com), and select the project which contains your agent.
-2. From the `nav` menu, choose `IAM & admin`, `Service accounts`. 
+2. From the `nav` menu, choose `IAM & admin`, `Service accounts`.
 3. Select `Dialogflow Integrations` (created by default by Dialogflow), or create your own.
 4. Under `actions`, select `create key`, select `JSON` and download the file.
 
@@ -186,7 +186,7 @@ When creating the middleware object, pass an options object with the following p
 | Property          | Required      | Default                                | Description                                                                                                                                                                                                                                                                                                                                                                                   |
 | ----------------- | :------------ | :------------------------------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | ignoreType        | No            | 'self_message'                         | Skip Dialogflow processing if the `type` matches the pattern. Useful to avoid unneccessary API calls. Patterns can be provided as a string, regex, or array of either.                                                                                                                                                                                                                        |
-| minimumConfidence | No            | 0.5                                    | Dialogflow returns a confidence (in the range 0.0 to 1.0) for each matching intent. This value is the cutoff - the `hears` and `action` middleware will only return a match for confidence values equal or greather than this value.                                                                                                                                                          |
+| minimumConfidence | No            | 0.0                                    | Dialogflow returns a confidence (in the range 0.0 to 1.0) for each matching intent. This value is the cutoff - the `hears` and `action` middleware will only return a match for confidence values equal or greather than this value.                                                                                                                                                          |
 | sessionIdProps    | No            | ['user', 'channel']                    | Session ID's help Dialogflow preserve context across multiple calls. By default, this session ID is an MD5 hash of the `user` and `channel` properties on the `message` object. If you'd like to use different properties, provide them as a string or array of strings. If none of the desired properties are available on a `message`, the middleware will use a random session ID instead. |
 | lang              | No            | 'en'                                   | if the `message` object does not have a `lang` property, this language will be used as the default.                                                                                                                                                                                                                                                                                           |
 | version           | No            | v2                                     | Version of the dialogflow API to use. Your agent needs to use the same setting for your [agent](https://dialogflow.com/docs/agents) in the DialogFlow console.                                                                                                                                                                                                                                |
