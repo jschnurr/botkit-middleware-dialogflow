@@ -39,30 +39,4 @@ describe('dialogflow api constructor', function() {
     mockery.deregisterMock('dialogflow');
     done();
   });
-
-  it('should set the projectId if passed explicitly as an option', function(done) {
-    const api = require('../src/api');
-
-    const config = {
-      version: 'v2',
-      projectId: 'test',
-    };
-    const app = api(config);
-
-    expect(app.projectId).to.equal(config.projectId);
-    done();
-  });
-
-  it('should set the projectId if passed implicitly via keyfile', function(done) {
-    const api = require('../src/api');
-
-    const config = {
-      version: 'v2',
-      keyFilename: __dirname + '/credentials.json',
-    };
-    const app = api(config);
-
-    expect(app.projectId).to.equal('abc123');
-    done();
-  });
 });

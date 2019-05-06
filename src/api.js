@@ -62,37 +62,17 @@ class DialogFlowAPI_V1 {
 class DialogFlowAPI_V2 {
   constructor(config) {
     this.config = config;
+    const opts = _.pick(config, [
+      'credentials',
+      'keyFilename',
+      'projectId',
+      'email',
+      'port',
+      'promise',
+      'servicePath',
+    ]);
 
-    const opts = {
-      keyFilename: config.keyFilename,
-    };
-
-    if (config.projectId) {
-      opts.projectId = config.projectId;
-    } else {
-      try {
-        const keyFile = require(config.keyFilename);
-        opts.projectId = keyFile.project_id;
-      } catch (err) {
-        throw new Error('projectId must be provided or available in the keyFile.');
-      }
-    }
     this.projectId = opts.projectId;
-    if (config.credentials) {
-      opts.credentials = config.credentials;
-    }
-    if (config.email) {
-      opts.email = config.email;
-    }
-    if (config.port) {
-      opts.port = config.port;
-    }
-    if (config.promise) {
-      opts.promise = config.promise;
-    }
-    if (opts.servicePath) {
-      opts.servicePath = config.servicePath;
-    }
 
     this.app = new dialogflow.SessionsClient(opts);
   }

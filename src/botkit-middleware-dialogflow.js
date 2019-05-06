@@ -1,10 +1,10 @@
 const debug = require('debug')('dialogflow-middleware');
 const util = require('./util');
 const api = require('./api');
-const path = require('path');
+const options = require('./options');
 
 module.exports = function(config) {
-  config = checkOptions(config);
+  config = options.checkOptions(config);
 
   const ignoreTypePatterns = util.makeArrayOfRegex(config.ignoreType || []);
   const middleware = {};
@@ -74,37 +74,3 @@ module.exports = function(config) {
   return middleware;
 };
 
-/**
- * Validate config and set defaults as required
- *
- * @param {object} config - the configuration provided by the user
- * @return {object} validated configuration with defaults applied
- */
-function checkOptions(config = {}) {
-  const defaults = {
-    version: 'v2',
-    minimumConfidence: 0.0,
-    sessionIdProps: ['user', 'channel'],
-    ignoreType: 'self_message',
-    lang: 'en',
-  };
-  config = Object.assign({}, defaults, config);
-
-  config.version = config.version.toUpperCase();
-
-  if (config.keyFilename) {
-    if (!path.isAbsolute(config.keyFilename)) {
-      config.keyFilename = path.join(process.cwd(), config.keyFilename);
-    }
-  }
-  if (config.version === 'V1' && !config.token) {
-    throw new Error('Dialogflow token must be provided for v1.');
-  }
-
-  if (config.version === 'V2' && !config.keyFilename) {
-    throw new Error('Dialogflow keyFilename must be provided for v2.');
-  }
-
-  debug(`settings are ${JSON.stringify(config)}`);
-  return config;
-}
