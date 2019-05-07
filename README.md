@@ -12,6 +12,7 @@ Dialogflow's Natural Language Processing (NLP) platform transforms real-world us
 and training are done in the convenient and powerful [Dialogflow Console](https://console.dialogflow.com/), with
 the results being immediately available to your bot.
 
+- [Requirements](#requirements)
 - [Installation](#installation)
 - [Migrating from earlier versions](#migrating-from-earlier-versions)
 - [Quick Start](#quick-start)
@@ -31,6 +32,10 @@ the results being immediately available to your bot.
 - [Contributing](#contributing)
 - [Credit](#credit)
 - [License](#license)
+
+## Requirements
+- Botkit v0.7.x
+- Node 8+
 
 ## Installation
 
