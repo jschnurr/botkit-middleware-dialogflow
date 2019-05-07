@@ -240,6 +240,11 @@ To use the legacy V1 version of the Dialogflow API:
 
 ## Change Log
 
+*   6-May-2019 v2.1.0
+    *   minimumConfidence now defaults to 0.0
+    *   Dialogflow credentials can be set using environment variables
+    *   drop support for Node 7
+
 *   8-Sept-2018 v2.0.4
     *   Fix projectId not detected when passed in config
 
