@@ -43,7 +43,7 @@ module.exports = function(config) {
       next();
     } catch (error) {
       debug('dialogflow returned error', error);
-      next(error);
+      next();
     }
   };
 
