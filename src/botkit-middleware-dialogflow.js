@@ -40,10 +40,8 @@ module.exports = function(config) {
       Object.assign(message, response);
 
       debug('dialogflow annotated message: %O', message);
-      next();
     } catch (error) {
       debug('dialogflow returned error', error);
-      next(error);
     }
   };
 
