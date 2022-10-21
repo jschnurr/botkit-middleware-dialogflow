@@ -86,6 +86,9 @@ class DialogFlowAPI_V2 {
           languageCode: languageCode,
         },
       },
+      queryParams: {
+        resetContexts: true
+      },
     };
 
     return new Promise((resolve, reject) => {
